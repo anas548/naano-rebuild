@@ -26,6 +26,7 @@ Real behaviour, backed by the database.
 | **Public card page** | `/c/<slug>`, a real page so the Deal Link resolves |
 | **Marketplace listing flag** | Completing a card sets `onboardingCompleted`, the exact condition the brand marketplace will select on |
 | **Opportunities** | Lists open brand campaigns and applying creates a real `Collaboration` (status `APPLIED`), priced from the creator's net rate plus Naano's margin |
+| **Collaborations** | Tabbed table of the creator's deals with live counts; applications made in Opportunities appear here immediately |
 
 ## Stubbed on purpose
 
@@ -52,7 +53,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | --- | --- |
 | **Brand onboarding** | Website analysis, value prop, ICPs, AI matching step |
 | **Brand dashboard** | Overview, Creators, Campaigns, Collaborations, Results, Messages, Billing — currently a placeholder page |
-| **Creator tabs** | Collaborations, Analytics, Community, Earnings, Affiliate, Messages are navigable placeholders |
+| **Creator tabs** | Analytics, Community, Earnings, Affiliate, Messages are navigable placeholders |
 | **Campaigns and bookings** | No way to create a campaign or invite a creator yet |
 | **Messaging** | `Conversation`/`Message` are modelled; no UI |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |

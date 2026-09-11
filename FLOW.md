@@ -71,7 +71,7 @@ and **the creator becomes listable in the brand marketplace**.
 | `/creator` | Built — stats, creator card, launch guide |
 | `/creator/card` | Built — Edit/Preview, Deal Link panel |
 | `/creator/opportunities` | Built — open campaigns, apply |
-| `/creator/collaborations` | Placeholder |
+| `/creator/collaborations` | Built — tabbed table of the creator's deals |
 | `/creator/analytics` | Placeholder |
 | `/creator/community` | Placeholder |
 | `/creator/earnings` | Placeholder |
@@ -89,10 +89,16 @@ creator's net rate plus Naano's margin — the same row the brand will later
 accept. The reference gates this tab behind 1,000 followers; that gate is
 dropped here, because LinkedIn import is paused and the count never leaves zero.
 
+**Collaborations** is the other end of Opportunities: applying there puts a row
+here under *Applications sent*, carrying the creator's net figure and what
+happens next. Invitations from a brand are grouped under *Needs action*, since
+the next move is the creator's and the reference has no separate invitations
+tab.
+
 ### Intended creator journey beyond this point *(not built)*
 
 ```
-Collaborations  brand invitations and accepted applications; publish the post
+Brand accepts   → Collaboration ACTIVE; publish the post
     └─ post published → Post row, metrics tracked
 Earnings        AWAITING_RELEASE → AVAILABLE → withdraw → IN_TRANSIT → PAID
                 payout by bank transfer or Stripe
