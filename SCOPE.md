@@ -34,7 +34,9 @@ Real behaviour, backed by the database.
 | **Affiliate program** | Both Invite brands and Invite creators views; the creator invite link is genuinely gated on having published a card |
 | **Brand onboarding** | Website → value prop &amp; ICP → AI matching, all three steps persisting to `Brand`/`Icp` as they go, including a real starter `Campaign` seeded from the edited brief |
 | **Brand app shell** | Sidebar (7 tabs), top bar with the real wallet balance, resume-mid-onboarding and cross-role guards |
-| **Brand Overview** | Hello banner, 4 stat cards reading real `Collaboration`/`Post` rows (all zero until Campaigns/Marketplace exist to populate them) |
+| **Brand Overview** | Hello banner, 4 stat cards reading real `Collaboration`/`Post` rows — fill in as campaigns and invitations are created |
+| **Brand Campaigns** | Create (draft or launch), list with All/Active/Draft/Completed tabs and live creator/published/budget counts, and a detail page that edits the brief, budget, status and `openToApplications`, plus a roster table of that campaign's real `Collaboration` rows |
+| **Creator Marketplace** | Real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry, country and max price; "Add" invites a creator to one of the brand's own active campaigns, creating a real `Collaboration` at `INVITED` priced at the creator's rate plus Naano's margin. Deliberately no ICP-match-score badge here — see below |
 
 ## Stubbed on purpose
 
@@ -45,7 +47,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **Auth strength** | Cookie holds the raw user id, unsigned | Agreed lightweight approach. **Anyone who can set a cookie can impersonate any user** — must be replaced before anything real ships |
 | **OAuth buttons** | LinkedIn and Google buttons are inert | Out of scope for stub auth; only email is wired |
 | **LinkedIn import** | URL is validated and stored, nothing is fetched; the "temporarily paused" notice shows | Agreed to hardcode as paused. Consequence: follower counts and post metrics stay at zero |
-| **AI matching** | Onboarding step 3 is a real loading beat, then marks onboarding complete and opens the dashboard — no model call. The Creators tab's own AI Matching view (chat UI, suggested prompts) is not built yet; that's Creator Marketplace/Campaigns work | Agreed demo behaviour by explicit decision: Marketplace is the functional discovery path, AI Matching stays UI-only because the user has a different real-matching plan later |
+| **AI matching** | Onboarding step 3 and the Creators tab's "AI Matching" view are both static: a cloud hero, a prompt box and 4 suggested prompts generated from the brand's real ICP titles, but typing or clicking any of them shows an honest "isn't wired up yet, try the Marketplace" notice rather than fake results. No model call anywhere | Explicit decision: Creator Marketplace is the one functional discovery path; AI Matching stays UI-only because the user has a different real-matching plan later. No badge, no invented match score |
 | **Website analysis** | A canned per-domain lookup (`src/lib/website-analysis.ts`) returns a value proposition and 3 ICPs for a handful of recognisable domains (apple.com, lemlist.com, stripe.com, notion.so, figma.com); anything else gets a generic B2B fallback. Nothing is actually fetched or crawled. Everything is editable on the next step | Explicit decision: canned, editable, beats either a blank form or pretending to be a real analysis |
 | **Payments** | Money is fully modelled but nothing moves | Demo only, no payment processor |
 | **Match scores** | Not computed yet | Intended to be derived from ICP/industry overlap at render time |
@@ -62,11 +64,9 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 
 | Area | Notes |
 | --- | --- |
-| **Creator Marketplace / AI Matching (Creators tab)** | Browsing real creators and inviting one to a campaign; the AI Matching chat UI |
-| **Campaigns page** | Campaign list/detail UI; onboarding already creates one real starter campaign per brand |
-| **Collaborations (brand side)** | Accepting/declining, wallet-gated booking, marking a submitted post complete |
+| **Collaborations (brand side)** | Accepting/declining an invitation or application, wallet-gated booking with instant top-up, and marking a creator-submitted post complete to release their earning |
 | **Results, Messages, Billing (brand side)** | Pages not built yet; `AppTopbar` already shows the real wallet balance |
-| **Bookings** | No way to invite a creator to a campaign yet |
+| **Wallet gate** | `Brand.balanceCents` is tracked and shown live, but nothing checks it yet — that check lives in Collaborations' accept step, not Marketplace's invite step (inviting doesn't commit money) |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
 | **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |

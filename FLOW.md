@@ -156,17 +156,24 @@ back in mid-onboarding resumes rather than dropping onto a broken dashboard.
 
 | Route | State |
 | --- | --- |
-| `/brand` | Built — hello banner, 4 real stat cards (creators activated, posts published, profiles engaged, impressions), all zero until Campaigns/Marketplace exist |
-| `/brand/creators` | Not built — AI matching chat (static) + marketplace browse (functional) — **this is where listed creators will appear** |
-| `/brand/campaigns` | Not built — campaign list with creators, published count, committed budget |
-| `/brand/collaborations` | Not built — the same deal rows creators see, from the brand side; accept/decline and mark-complete live here |
+| `/brand` | Built — hello banner, 4 real stat cards (creators activated, posts published, profiles engaged, impressions) |
+| `/brand/creators` | Built — two tabs. **AI Matching** is the static cloud hero from the recon: a prompt box and 4 suggested prompts (built from the brand's real ICP titles), but submitting shows an honest "isn't wired up yet, try the Marketplace" notice — no fake results. **Creator Marketplace** is the functional path: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
+| `/brand/campaigns` | Built — list with All/Active/Draft/Completed tabs and live creators/published/budget counts; **Create a campaign** (`/brand/campaigns/new`) saves as draft or launches; the detail page edits the brief/budget/status/`openToApplications` and shows the real roster |
+| `/brand/collaborations` | Not built — the same deal rows creators see, from the brand side; accept/decline, the wallet gate, and mark-complete live here |
 | `/brand/results` | Not built — reach, qualified clicks, per-creator attribution, tracking pixel |
 | `/brand/messages` | Not built — reuses the same `Conversation` rows the creator inbox already writes |
 | `/brand/billing` | Not built — wallet balance (already shown live in the top bar), top-ups, invoices |
 
+**Inviting a creator** happens from the Marketplace card, not the campaign
+page: pick which of the brand's active campaigns to add them to (a `<select>`
+if there's more than one), and it creates a real `Collaboration` at `INVITED`,
+priced at the creator's net rate plus Naano's margin — the same row the
+creator sees under *Needs action* on their own Collaborations tab. Inviting
+doesn't touch the wallet; that check is Collaborations' job, next.
+
 The sidebar, top bar (with the real `Brand.balanceCents`) and all 7 routes
-exist and are guarded by role and onboarding state; the pages themselves past
-Overview are next.
+exist and are guarded by role and onboarding state; Overview, Creators and
+Campaigns are built, Collaborations/Results/Messages/Billing are next.
 
 ### Where the two sides meet
 

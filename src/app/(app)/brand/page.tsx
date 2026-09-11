@@ -2,11 +2,10 @@ import { CreditCard, MessagesSquare, Store, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 
-// Chunk 1 covers onboarding and the app shell only — the Overview page's real
-// widgets (To do list, New creators rail, Messages preview) depend on the
-// Marketplace and Collaborations pages, which come next. These 4 stat cards
-// are wired to real data now so nothing here is fabricated while the rest of
-// the dashboard is still being built.
+// Overview's real widgets (To do list, New creators rail, Messages preview)
+// still depend on Collaborations (accept/decline, wallet-gated booking),
+// which comes next. These 4 stat cards are wired to real data now so nothing
+// here is fabricated while the rest of the dashboard is still being built.
 export default async function BrandOverviewPage() {
   const user = await requireUser();
 
@@ -68,10 +67,11 @@ export default async function BrandOverviewPage() {
           Coming next
         </p>
         <p className="mt-2 max-w-xl text-[0.875rem] leading-relaxed text-ink/60">
-          Onboarding is done and your first campaign brief is saved. The
-          Creators marketplace, Campaigns and Collaborations pages are next —
-          once they&apos;re built, this page fills in with real creators,
-          messages and to-dos instead of these four counters.
+          Campaigns and the Creator Marketplace are live — invite a creator
+          and this campaign&apos;s roster fills in. Collaborations (accepting
+          an application, marking a post complete) is next; once it&apos;s
+          built, this page fills in with real to-dos and messages instead of
+          these four counters.
         </p>
       </div>
     </div>

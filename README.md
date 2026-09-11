@@ -92,7 +92,16 @@ email, then try the 3-step onboarding: enter any website (try `apple.com`,
 `lemlist.com`, `stripe.com`, `notion.so` or `figma.com` for hand-written
 results — anything else gets a generic fallback), edit the value proposition
 and 3 ICPs, then continue through the AI Matching loading step to land on the
-dashboard. Past Overview, the rest of the brand tabs are not built yet.
+dashboard. From there:
+
+1. Open **Campaigns** — your onboarding brief is already a live campaign — and
+   create a second one to see draft vs. launch
+2. Open **Creators**, switch to the **Creator Marketplace** tab, filter by
+   industry/country/price, and **Add** a creator to a campaign
+3. Open that campaign again — the creator now shows up in its roster
+
+Results, Messages, Billing and accepting an invitation (Collaborations) are
+not built yet.
 
 ### Demo brand login
 
