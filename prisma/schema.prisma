@@ -34,10 +34,11 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  brand         Brand?
-  creator       CreatorProfile?
-  messages      Message[]
-  conversations Conversation[]  @relation("ConversationParticipants")
+  brand             Brand?
+  creator           CreatorProfile?
+  messages          Message[]
+  conversations     Conversation[]     @relation("ConversationParticipants")
+  conversationReads ConversationRead[]
 }
 
 // ---------------------------------------------------------------------------
@@ -237,8 +238,27 @@ model Conversation {
   isSystem  Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  participants User[]    @relation("ConversationParticipants")
+  participants User[]              @relation("ConversationParticipants")
   messages     Message[]
+  reads        ConversationRead[]
+}
+
+/// One row per (conversation, user): when that user last opened the thread.
+/// No row, or a row older than the latest message from someone else, means
+/// unread. There's no "unread count" of its own — it's always derived from
+/// comparing this timestamp against Message.createdAt.
+model ConversationRead {
+  id String @id @default(cuid())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lastReadAt DateTime @default(now())
+
+  @@unique([conversationId, userId])
 }
 
 model Message {

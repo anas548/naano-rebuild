@@ -31,6 +31,7 @@ Real behaviour, backed by the database.
 | **Earnings** | Totals, six-month chart and recent activity derived from **completed collaborations**; an Earning row, where present, decides the payout stage |
 | **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
 | **Messages** | Real threads per collaboration, shared between the creator and brand inboxes (one `MessagesView` component, two pages) — a message either side sends appears in the other's inbox immediately, membership is enforced server-side |
+| **Unread messages** | A `ConversationRead` row per (conversation, user) tracks when each side last opened a thread; a conversation is unread when its latest message postdates that mark (or there's no mark) and wasn't sent by the viewer. The sidebar's Messages nav item shows a live count badge, and each conversation row shows bold text + a dot until opened — both update in place on click, no reload, via a server action that revalidates the persisted layout (not just the page) |
 | **Affiliate program** | Both Invite brands and Invite creators views; the creator invite link is genuinely gated on having published a card |
 | **Brand onboarding** | Website → value prop &amp; ICP → AI matching, all three steps persisting to `Brand`/`Icp` as they go, including a real starter `Campaign` seeded from the edited brief |
 | **Brand app shell** | Sidebar (7 tabs), top bar with the real wallet balance, resume-mid-onboarding and cross-role guards |

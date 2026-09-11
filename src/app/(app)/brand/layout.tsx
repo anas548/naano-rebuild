@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { nextOnboardingStep } from "@/lib/brand-onboarding";
+import { countUnreadConversations, ensureConversations } from "@/lib/messaging";
 import { BrandSidebar } from "@/components/app/brand-sidebar";
 import { AppTopbar } from "@/components/app/app-topbar";
 
@@ -18,9 +19,12 @@ export default async function BrandLayout({ children }: LayoutProps<"/brand">) {
   const resumeStep = nextOnboardingStep(brand);
   if (resumeStep) redirect(resumeStep);
 
+  await ensureConversations(user.id);
+  const unreadMessages = await countUnreadConversations(user.id);
+
   return (
     <div className="flex min-h-screen bg-[#f9fafa]">
-      <BrandSidebar brandName={brand.name} />
+      <BrandSidebar brandName={brand.name} unreadMessages={unreadMessages} />
       <div className="flex min-w-0 flex-1 flex-col">
         <AppTopbar
           balanceCents={brand.balanceCents}

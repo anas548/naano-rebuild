@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { Search } from "lucide-react";
 import type { getThread, listConversations } from "@/lib/messaging";
 import { counterpartName } from "@/lib/messaging";
 import { MessageComposer } from "@/components/messaging/message-composer";
+import { ConversationLink } from "@/components/messaging/conversation-link";
 import { cn } from "@/lib/utils";
 
 type Conversations = Awaited<ReturnType<typeof listConversations>>;
@@ -25,6 +25,7 @@ export function MessagesView({
   conversations,
   thread,
   selectedId,
+  unreadIds,
   emptySubtitle,
 }: {
   userId: string;
@@ -32,6 +33,8 @@ export function MessagesView({
   conversations: Conversations;
   thread: Thread | null;
   selectedId: string | undefined;
+  /** Conversation ids that are unread for this viewer, right now. */
+  unreadIds: Set<string>;
   emptySubtitle: string;
 }) {
   return (
@@ -55,13 +58,15 @@ export function MessagesView({
               const name = counterpartName(conversation, viewerIsCreator);
               const last = conversation.messages[0];
               const active = conversation.id === selectedId;
+              const unread = unreadIds.has(conversation.id);
 
               return (
-                <Link
+                <ConversationLink
                   key={conversation.id}
+                  conversationId={conversation.id}
                   href={`?thread=${conversation.id}`}
                   className={cn(
-                    "flex gap-3 px-5 py-3.5 transition-colors",
+                    "flex items-start gap-3 px-5 py-3.5 transition-colors",
                     active ? "bg-[#faf8ff]" : "hover:bg-neutral-50",
                   )}
                 >
@@ -75,7 +80,12 @@ export function MessagesView({
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-baseline justify-between gap-2">
-                      <span className="truncate text-[0.875rem] font-semibold text-ink">
+                      <span
+                        className={cn(
+                          "truncate text-[0.875rem] text-ink",
+                          unread ? "font-bold" : "font-semibold",
+                        )}
+                      >
                         {name}
                       </span>
                       {last && (
@@ -84,14 +94,25 @@ export function MessagesView({
                         </span>
                       )}
                     </span>
-                    <span className="mt-0.5 block truncate text-[0.8125rem] text-ink/50">
+                    <span
+                      className={cn(
+                        "mt-0.5 block truncate text-[0.8125rem]",
+                        unread ? "font-semibold text-ink" : "text-ink/50",
+                      )}
+                    >
                       {last?.body ??
                         (conversation.collaboration
                           ? conversation.collaboration.campaign.name
                           : "No messages yet")}
                     </span>
                   </span>
-                </Link>
+                  {unread && (
+                    <span
+                      aria-label="Unread"
+                      className="mt-1.5 size-2 shrink-0 rounded-full bg-naano-violet"
+                    />
+                  )}
+                </ConversationLink>
               );
             })}
 

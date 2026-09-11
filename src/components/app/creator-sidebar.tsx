@@ -28,7 +28,7 @@ const NAV = [
   { href: "/creator/messages", label: "Messages", icon: MessageCircle },
 ];
 
-export function CreatorSidebar() {
+export function CreatorSidebar({ unreadMessages = 0 }: { unreadMessages?: number }) {
   const pathname = usePathname();
 
   return (
@@ -71,12 +71,20 @@ export function CreatorSidebar() {
               </span>
               <span
                 className={cn(
-                  "text-[0.9375rem] font-semibold",
+                  "flex-1 text-[0.9375rem] font-semibold",
                   active ? "text-naano-violet" : "text-[#4d576b]",
                 )}
               >
                 {label}
               </span>
+              {href === "/creator/messages" && unreadMessages > 0 && (
+                <span
+                  aria-label={`${unreadMessages} unread message${unreadMessages === 1 ? "" : "s"}`}
+                  className="flex min-w-[1.25rem] items-center justify-center rounded-full bg-naano-violet px-1.5 py-0.5 text-[0.6875rem] font-semibold text-white"
+                >
+                  {unreadMessages > 9 ? "9+" : unreadMessages}
+                </span>
+              )}
             </Link>
           );
         })}

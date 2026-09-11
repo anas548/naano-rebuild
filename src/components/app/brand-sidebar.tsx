@@ -24,7 +24,13 @@ const NAV = [
   { href: "/brand/billing", label: "Billing", icon: Wallet },
 ];
 
-export function BrandSidebar({ brandName }: { brandName: string | null }) {
+export function BrandSidebar({
+  brandName,
+  unreadMessages = 0,
+}: {
+  brandName: string | null;
+  unreadMessages?: number;
+}) {
   const pathname = usePathname();
 
   return (
@@ -78,12 +84,20 @@ export function BrandSidebar({ brandName }: { brandName: string | null }) {
               </span>
               <span
                 className={cn(
-                  "text-[0.9375rem] font-semibold",
+                  "flex-1 text-[0.9375rem] font-semibold",
                   active ? "text-naano-violet" : "text-[#4d576b]",
                 )}
               >
                 {label}
               </span>
+              {href === "/brand/messages" && unreadMessages > 0 && (
+                <span
+                  aria-label={`${unreadMessages} unread message${unreadMessages === 1 ? "" : "s"}`}
+                  className="flex min-w-[1.25rem] items-center justify-center rounded-full bg-naano-violet px-1.5 py-0.5 text-[0.6875rem] font-semibold text-white"
+                >
+                  {unreadMessages > 9 ? "9+" : unreadMessages}
+                </span>
+              )}
             </Link>
           );
         })}

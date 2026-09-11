@@ -91,9 +91,24 @@ dropped here, because LinkedIn import is paused and the count never leaves zero.
 
 **Messages** opens a thread per live collaboration with both the creator and the
 brand as participants, so the brand reads the same conversation from its own
-dashboard once that is built. A NaanoBot thread exists from signup. Declined
-deals get no thread, and membership is checked server-side on both reading a
-thread and posting to it.
+dashboard. A NaanoBot thread exists from signup. Declined deals get no thread,
+and membership is checked server-side on both reading a thread and posting to
+it.
+
+Unread state is tracked per (conversation, user) in `ConversationRead` — a
+thread is unread when its latest message is newer than that mark (or there
+is no mark yet) and wasn't sent by the viewer. Both sidebars show a live
+count badge on the Messages nav item, and each conversation row in the list
+is bold with a dot until opened. Opening a thread marks it read two ways: the
+page itself marks it as part of rendering (so a direct visit or refresh is
+always correct), and clicking a row also fires a small server action that
+revalidates the *layout* specifically — without that second part, the
+sidebar badge would only catch up on the next full navigation, since Next.js
+layouts persist across a same-page `?thread=` change and don't refetch on
+their own. The click action fires unconditionally, even for a row the same
+page load already marked read via auto-selecting it, because that's exactly
+the case where the badge was computed a moment earlier in that navigation and
+hasn't caught up — skipping the action there would leave it stuck.
 
 **Collaborations** is the other end of Opportunities: applying there puts a row
 here under *Applications sent*, carrying the creator's net figure and what
