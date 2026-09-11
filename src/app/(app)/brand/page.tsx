@@ -1,11 +1,12 @@
-import { CreditCard, MessagesSquare, Store, Users } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, CreditCard, MessagesSquare, Store, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
+import { submittedPost } from "@/lib/collaborations";
 
-// Overview's real widgets (To do list, New creators rail, Messages preview)
-// still depend on Collaborations (accept/decline, wallet-gated booking),
-// which comes next. These 4 stat cards are wired to real data now so nothing
-// here is fabricated while the rest of the dashboard is still being built.
+// Results and Messages are still not built, so this page can't show real
+// performance or a message preview yet — but the 4 stat cards and the To do
+// list are wired to real Collaboration/Post rows, not placeholders.
 export default async function BrandOverviewPage() {
   const user = await requireUser();
 
@@ -14,7 +15,7 @@ export default async function BrandOverviewPage() {
     select: { id: true, name: true },
   });
 
-  const [creatorsActivated, collaborationsCount, posts] = await Promise.all([
+  const [creatorsActivated, collaborationsCount, posts, toDoRows] = await Promise.all([
     prisma.collaboration.findMany({
       where: { campaign: { brandId: brand.id }, status: { in: ["ACTIVE", "COMPLETED"] } },
       distinct: ["creatorId"],
@@ -25,7 +26,27 @@ export default async function BrandOverviewPage() {
       where: { collaboration: { campaign: { brandId: brand.id } }, publishedAt: { not: null } },
       select: { impressions: true },
     }),
+    prisma.collaboration.findMany({
+      where: {
+        campaign: { brandId: brand.id },
+        OR: [{ status: "APPLIED" }, { status: "ACTIVE" }],
+      },
+      orderBy: { updatedAt: "desc" },
+      include: {
+        creator: { include: { user: { select: { firstName: true, lastName: true } } } },
+        posts: { select: { linkedinUrl: true } },
+      },
+    }),
   ]);
+
+  const toDo = toDoRows
+    .filter((r) => r.status === "APPLIED" || submittedPost(r.posts))
+    .slice(0, 4)
+    .map((r) => ({
+      id: r.id,
+      name: `${r.creator.user.firstName} ${r.creator.user.lastName}`,
+      action: r.status === "APPLIED" ? "Review application" : "Approve submitted post",
+    }));
 
   const stats = [
     { label: "Creators activated", value: creatorsActivated.length, icon: Users },
@@ -62,17 +83,47 @@ export default async function BrandOverviewPage() {
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-[#e6e8ef] bg-white p-6">
-        <p className="text-[0.6875rem] font-semibold tracking-[0.1em] text-ink/45 uppercase">
-          Coming next
-        </p>
-        <p className="mt-2 max-w-xl text-[0.875rem] leading-relaxed text-ink/60">
-          Campaigns and the Creator Marketplace are live — invite a creator
-          and this campaign&apos;s roster fills in. Collaborations (accepting
-          an application, marking a post complete) is next; once it&apos;s
-          built, this page fills in with real to-dos and messages instead of
-          these four counters.
-        </p>
+      <div className="mt-6 rounded-2xl border border-[#e6e8ef] bg-white">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div>
+            <h2 className="font-display text-[1.0625rem] font-semibold text-ink">To do</h2>
+            <p className="text-[0.8125rem] text-ink/50">Priority actions</p>
+          </div>
+          {toDo.length > 0 && (
+            <Link
+              href="/brand/collaborations?tab=to-do"
+              className="text-[0.8125rem] font-semibold text-naano-violet hover:underline"
+            >
+              See all
+            </Link>
+          )}
+        </div>
+
+        {toDo.length === 0 ? (
+          <p className="border-t border-[#e6e8ef] px-6 py-8 text-[0.875rem] text-ink/50">
+            Nothing needs your attention right now. Invite a creator from the{" "}
+            <Link href="/brand/creators" className="font-semibold text-naano-violet">
+              Marketplace
+            </Link>{" "}
+            to get started.
+          </p>
+        ) : (
+          <div className="divide-y divide-neutral-100 border-t border-[#e6e8ef]">
+            {toDo.map((row) => (
+              <Link
+                key={row.id}
+                href="/brand/collaborations"
+                className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-neutral-50"
+              >
+                <span className="text-[0.9375rem] font-medium text-ink">{row.name}</span>
+                <span className="flex items-center gap-1.5 text-[0.8125rem] text-ink/50">
+                  {row.action}
+                  <ChevronRight className="size-4" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -98,10 +98,19 @@ dashboard. From there:
    create a second one to see draft vs. launch
 2. Open **Creators**, switch to the **Creator Marketplace** tab, filter by
    industry/country/price, and **Add** a creator to a campaign
-3. Open that campaign again — the creator now shows up in its roster
+3. Open **Collaborations** and try **Accept** — it'll be blocked, because a
+   fresh brand's wallet is empty
+4. Open **Billing** and click **+ €10,000** — instant, no real payment
+   processor behind it
+5. Back on Collaborations, **Accept** now succeeds — the wallet debits and a
+   `BOOKING` invoice appears in Billing
+6. Sign in as the creator you invited (or use a demo one, see below), open
+   **Collaborations**, and **Submit** a LinkedIn post link
+7. Back on the brand's Collaborations, **Approve** the post — the
+   collaboration completes and the creator's **Earnings** total updates
+   immediately
 
-Results, Messages, Billing and accepting an invitation (Collaborations) are
-not built yet.
+Results and Messages (brand side) are not built yet.
 
 ### Demo brand login
 
@@ -114,6 +123,10 @@ see a populated brand account:
 | `demo-brand-lemlist@naano.demo` | `demo-password` |
 | `demo-brand-blogseo@naano.demo` | `demo-password` |
 | `demo-brand-leadbay@naano.demo` | `demo-password` |
+
+The same seed creates 12 demo creators, all on `demo-password`, e.g.
+`demo-creator-eric.djavid@naano.demo` (see `prisma/demo.ts` for the full list)
+— useful for step 6 above without a second signup.
 
 ## A note on `.agent-logs/`
 

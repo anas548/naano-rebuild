@@ -29,3 +29,13 @@ export const STATUS_STYLES: Record<CollaborationStatus, string> = {
   DECLINED: "bg-red-50 text-red-700",
   COMPLETED: "bg-[#eef2f7] text-[#4d576b]",
 };
+
+/** There's no separate enum state for "post submitted, awaiting brand
+ *  approval" — an ACTIVE collaboration with a Post that has a link is that
+ *  state. Keeping it derived (rather than adding a status) avoids a status
+ *  whose meaning depends on which side is looking at it. */
+export function submittedPost<T extends { linkedinUrl: string | null }>(
+  posts: T[],
+): T | undefined {
+  return posts.find((p) => p.linkedinUrl);
+}

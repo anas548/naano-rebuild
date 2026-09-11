@@ -26,7 +26,7 @@ Real behaviour, backed by the database.
 | **Public card page** | `/c/<slug>`, a real page so the Deal Link resolves |
 | **Marketplace listing flag** | Completing a card sets `onboardingCompleted`, the exact condition the brand marketplace will select on |
 | **Opportunities** | Lists open brand campaigns and applying creates a real `Collaboration` (status `APPLIED`), priced from the creator's net rate plus Naano's margin |
-| **Collaborations** | Tabbed table of the creator's deals with live counts; applications made in Opportunities appear here immediately |
+| **Collaborations (creator side)** | Tabbed table of the creator's deals with live counts. **Accept/decline** an invitation, **submit** the LinkedIn post link once active (editable until approved) — all real actions, not just a status display |
 | **Analytics** | Reads the profile's real public-LinkedIn figures. Since import is paused these are genuinely zero/pending, which is what the reference shows |
 | **Earnings** | Totals, six-month chart and recent activity derived from **completed collaborations**; an Earning row, where present, decides the payout stage |
 | **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
@@ -34,9 +34,13 @@ Real behaviour, backed by the database.
 | **Affiliate program** | Both Invite brands and Invite creators views; the creator invite link is genuinely gated on having published a card |
 | **Brand onboarding** | Website → value prop &amp; ICP → AI matching, all three steps persisting to `Brand`/`Icp` as they go, including a real starter `Campaign` seeded from the edited brief |
 | **Brand app shell** | Sidebar (7 tabs), top bar with the real wallet balance, resume-mid-onboarding and cross-role guards |
-| **Brand Overview** | Hello banner, 4 stat cards reading real `Collaboration`/`Post` rows — fill in as campaigns and invitations are created |
+| **Brand Overview** | Hello banner, 4 stat cards, and a To do list reading real `Collaboration`/`Post` rows — applications to review and submitted posts to approve show up here, not just on Collaborations |
 | **Brand Campaigns** | Create (draft or launch), list with All/Active/Draft/Completed tabs and live creator/published/budget counts, and a detail page that edits the brief, budget, status and `openToApplications`, plus a roster table of that campaign's real `Collaboration` rows |
 | **Creator Marketplace** | Real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry, country and max price; "Add" invites a creator to one of the brand's own active campaigns, creating a real `Collaboration` at `INVITED` priced at the creator's rate plus Naano's margin. Deliberately no ICP-match-score badge here — see below |
+| **Collaborations (brand side)** | Same deal rows the creator sees, from the brand's end, with All/Active/Invitations received/Invitations sent/To do/Completed tabs. **Accept/decline** an application (wallet-gated — see Billing), **approve** a submitted post to complete the collaboration |
+| **Billing** | Real `Brand.balanceCents`, an instant top-up (custom amount or +€2,500/+€10,000 presets) that writes a `TOP_UP` invoice, and an invoices table (All/Top-ups/Bookings) |
+| **The wallet gate** | Accepting an invitation or application (whichever side does it) checks the brand's balance and, if sufficient, debits it and writes a `BOOKING` invoice in one transaction. Insufficient balance blocks the accept with a role-appropriate message — the brand's points at Billing, the creator's explains the brand needs to top up |
+| **Money moving for real** | Once a brand approves a submitted post, the collaboration completes and — because the Earnings page already treats a `COMPLETED` collaboration with no `Earning` row as fully available — the creator's Earnings total updates immediately. No `Earning` row is created for this path on purpose |
 
 ## Stubbed on purpose
 
@@ -59,14 +63,14 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **Affiliate 25% / 3 months** | Both affiliate views render and links copy | Referral attribution and reward tracking are not implemented, so the stats read zero. Links point at the real signup routes with a `ref` tag rather than 404ing |
 | **Email verification** | Brand signup goes straight through | The 6-digit code screen exists in recon but is not built |
 | **1,000-follower gate** | Not enforced; every creator sees open campaigns | The reference gates Opportunities behind 1,000 followers, but LinkedIn import is paused so the count is always 0 and nobody could ever pass it. Dropped by decision rather than left as a dead end |
+| **Post approval, no revision loop** | A brand can only Approve a submitted post, not send it back for changes | Keeps the state machine to what was asked (creator submits, brand approves); the creator can still edit the link themselves before approval |
+| **`NEEDS_ACTION` status / `dueDate` field** | Defined in the schema, never produced | "Post submitted, awaiting brand approval" is derived (an `ACTIVE` collaboration with a linked `Post`) rather than a status of its own, so its meaning doesn't depend on which side is looking. `dueDate` was never wired into any flow, so the Collaborations table drops that column rather than showing a permanent "—" |
 
 ## Not built
 
 | Area | Notes |
 | --- | --- |
-| **Collaborations (brand side)** | Accepting/declining an invitation or application, wallet-gated booking with instant top-up, and marking a creator-submitted post complete to release their earning |
-| **Results, Messages, Billing (brand side)** | Pages not built yet; `AppTopbar` already shows the real wallet balance |
-| **Wallet gate** | `Brand.balanceCents` is tracked and shown live, but nothing checks it yet — that check lives in Collaborations' accept step, not Marketplace's invite step (inviting doesn't commit money) |
+| **Results, Messages (brand side)** | Pages not built yet |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
 | **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |

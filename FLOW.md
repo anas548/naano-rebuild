@@ -71,7 +71,7 @@ and **the creator becomes listable in the brand marketplace**.
 | `/creator` | Built — stats, creator card, launch guide |
 | `/creator/card` | Built — Edit/Preview, Deal Link panel |
 | `/creator/opportunities` | Built — open campaigns, apply |
-| `/creator/collaborations` | Built — tabbed table of the creator's deals |
+| `/creator/collaborations` | Built — tabbed table of the creator's deals, with real accept/decline and post-submission actions |
 | `/creator/analytics` | Built — public LinkedIn figures, pending while import is paused |
 | `/creator/community` | Built — Slack, LinkedIn visibility, campaign leaderboard |
 | `/creator/earnings` | Built — totals and activity from completed collaborations |
@@ -99,16 +99,31 @@ thread and posting to it.
 here under *Applications sent*, carrying the creator's net figure and what
 happens next. Invitations from a brand are grouped under *Needs action*, since
 the next move is the creator's and the reference has no separate invitations
-tab.
+tab. That "action" is real:
 
-### Intended creator journey beyond this point *(not built)*
+- An **`INVITED`** row shows **Accept**/**Decline**. Accepting is the one
+  moment a collaboration becomes `ACTIVE` — see the wallet gate below — so it
+  can fail with a message telling the creator the brand's wallet is short,
+  rather than always succeeding.
+- An **`ACTIVE`** row with no post yet shows a link-input + **Submit**. Once a
+  link is submitted the row shows "Waiting for approval" with an **Edit link**
+  option, so a creator can correct it right up until the brand approves.
+- Everything else — `APPLIED`, `DECLINED`, `COMPLETED` — is read-only, exactly
+  as it was before this chunk.
 
-```
-Brand accepts   → Collaboration ACTIVE; publish the post
-    └─ post published → Post row, metrics tracked
-Earnings        totals come from COMPLETED collaborations; withdrawal itself
-                (bank transfer or Stripe) is not wired
-```
+Whichever side of an `INVITED`/`APPLIED` pair clicks Accept, the same
+transaction runs: check the brand's `balanceCents` against the deal's
+`amountCents`, and if there's enough, debit the wallet, write a `BOOKING`
+invoice, and flip the collaboration to `ACTIVE` — all in one
+`prisma.$transaction`. There's no separate "commit the money" step; accepting
+*is* committing the money.
+
+**Earnings** picks this up automatically. Once a brand approves a submitted
+post, the collaboration becomes `COMPLETED` with no `Earning` row created —
+and the Earnings page already treated a `COMPLETED` collaboration with no
+`Earning` row as fully `AVAILABLE` (see its own comment), so the creator's
+totals update the moment the brand clicks Approve, with no extra wiring.
+Withdrawal itself (bank transfer or Stripe) is still not wired.
 
 ## Brand journey
 
@@ -156,24 +171,40 @@ back in mid-onboarding resumes rather than dropping onto a broken dashboard.
 
 | Route | State |
 | --- | --- |
-| `/brand` | Built — hello banner, 4 real stat cards (creators activated, posts published, profiles engaged, impressions) |
+| `/brand` | Built — hello banner, 4 real stat cards, and a To do list of applications to review and posts to approve |
 | `/brand/creators` | Built — two tabs. **AI Matching** is the static cloud hero from the recon: a prompt box and 4 suggested prompts (built from the brand's real ICP titles), but submitting shows an honest "isn't wired up yet, try the Marketplace" notice — no fake results. **Creator Marketplace** is the functional path: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
 | `/brand/campaigns` | Built — list with All/Active/Draft/Completed tabs and live creators/published/budget counts; **Create a campaign** (`/brand/campaigns/new`) saves as draft or launches; the detail page edits the brief/budget/status/`openToApplications` and shows the real roster |
-| `/brand/collaborations` | Not built — the same deal rows creators see, from the brand side; accept/decline, the wallet gate, and mark-complete live here |
+| `/brand/collaborations` | Built — the same deal rows creators see, from the brand side, with All/Active/Invitations received/Invitations sent/To do/Completed tabs. **Accept**/**Decline** an application (wallet-gated), **Approve** a submitted post |
 | `/brand/results` | Not built — reach, qualified clicks, per-creator attribution, tracking pixel |
 | `/brand/messages` | Not built — reuses the same `Conversation` rows the creator inbox already writes |
-| `/brand/billing` | Not built — wallet balance (already shown live in the top bar), top-ups, invoices |
+| `/brand/billing` | Built — real balance, instant top-up (custom or +€2,500/+€10,000 presets), invoices table (All/Top-ups/Bookings) |
 
 **Inviting a creator** happens from the Marketplace card, not the campaign
 page: pick which of the brand's active campaigns to add them to (a `<select>`
 if there's more than one), and it creates a real `Collaboration` at `INVITED`,
 priced at the creator's net rate plus Naano's margin — the same row the
 creator sees under *Needs action* on their own Collaborations tab. Inviting
-doesn't touch the wallet; that check is Collaborations' job, next.
+doesn't touch the wallet; accepting does — see the wallet gate above.
+
+**Accepting an application** on Collaborations runs the identical transaction
+the creator's Accept button runs (same helper, same gate): if the brand's
+balance covers the deal, it debits the wallet, writes a `BOOKING` invoice, and
+activates the collaboration. If not, the error links straight to Billing
+("Top up"). Declining just sets the row to `DECLINED`.
+
+**Approving a submitted post** is the other half of the creator's Submit
+action: the brand sees a "View post" link to whatever URL the creator
+entered, and one click completes the collaboration — no revision loop, by
+decision (the creator can still edit their link before it's approved).
+
+**Billing's top-up is instant and always succeeds** — it's demo money, there's
+no payment processor — but it writes a real `TOP_UP` `Invoice` and increments
+`Brand.balanceCents` in the same transaction, so a brand can unblock a stuck
+accept in one click without leaving the error message.
 
 The sidebar, top bar (with the real `Brand.balanceCents`) and all 7 routes
-exist and are guarded by role and onboarding state; Overview, Creators and
-Campaigns are built, Collaborations/Results/Messages/Billing are next.
+exist and are guarded by role and onboarding state. Overview, Creators,
+Campaigns, Collaborations and Billing are built; Results and Messages remain.
 
 ### Where the two sides meet
 
@@ -182,17 +213,25 @@ The join is already wired from the creator end. A creator with
 query. Completing a creator card today is what will make that creator appear
 brand-side tomorrow — no further creator-side work needed for that link.
 
-## Money flow *(modelled, not implemented)*
+## Money flow
 
 ```
-Brand tops up        → Invoice(TOP_UP)   → Brand.balanceCents ↑
-Brand books creator  → Invoice(BOOKING)  → Collaboration.amountCents committed
-                                         → Earning(AWAITING_RELEASE) for creator
-Post published+paid  → Earning → AVAILABLE
-Creator withdraws    → Withdrawal(PENDING → IN_TRANSIT → PAID)
-                       via PayoutMethod (BANK_TRANSFER | STRIPE)
+Brand tops up            → Invoice(TOP_UP)  → Brand.balanceCents ↑          built
+Either side accepts      → Invoice(BOOKING) → Brand.balanceCents ↓          built
+  (wallet-gated,            Collaboration → ACTIVE
+   one $transaction)
+Brand approves the post  → Collaboration → COMPLETED                        built
+                            (no Earning row — the creator's balance is
+                             simply the sum of their COMPLETED collabs)
+Creator withdraws         → Withdrawal(PENDING → IN_TRANSIT → PAID)         not built
+                             via PayoutMethod (BANK_TRANSFER | STRIPE)
 ```
 
 The brand pays `creatorNetCents` plus Naano's margin; the difference is the
-platform's cut. Wallet balance and the invoice ledger are intended to move in
-one transaction so they always reconcile.
+platform's cut (`src/lib/pricing.ts`). Every transition above that moves
+money — top-up, booking, and the wallet gate that guards booking — runs
+inside a single `prisma.$transaction`, so the wallet and the invoice ledger
+can't drift apart. The `Earning` model still exists for a withdrawal-stage
+concept (`AWAITING_RELEASE` → `IN_TRANSIT` → `PAID`) but nothing writes one
+yet — completing a collaboration is enough for its money to count as
+available, which is as far as this clone's money flow goes.

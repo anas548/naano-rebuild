@@ -2,7 +2,8 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatEuros, humanizeStatus } from "@/lib/pricing";
-import { CREATOR_TABS, STATUS_STYLES, resolveTab } from "@/lib/collaborations";
+import { CREATOR_TABS, STATUS_STYLES, resolveTab, submittedPost } from "@/lib/collaborations";
+import { CollaborationAction } from "@/components/creator/collaboration-action";
 import { cn } from "@/lib/utils";
 
 const COLUMNS = [
@@ -11,8 +12,8 @@ const COLUMNS = [
   "Status",
   "Performance",
   "Next action",
-  "Due date",
   "Your net",
+  "Action",
 ];
 
 export default async function CollaborationsPage({
@@ -28,7 +29,7 @@ export default async function CollaborationsPage({
     include: {
       campaign: { include: { brand: { select: { name: true } } } },
       posts: {
-        select: { impressions: true, qualifiedClicks: true, publishedAt: true },
+        select: { impressions: true, qualifiedClicks: true, publishedAt: true, linkedinUrl: true },
       },
     },
   });
@@ -148,19 +149,15 @@ export default async function CollaborationsPage({
                       <td className="px-5 py-4 text-[0.875rem] text-ink/70">
                         {row.nextAction ?? <span className="text-ink/35">—</span>}
                       </td>
-                      <td className="px-5 py-4 text-[0.875rem] text-ink/70">
-                        {row.dueDate ? (
-                          row.dueDate.toLocaleDateString("en-GB", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
-                        ) : (
-                          <span className="text-ink/35">—</span>
-                        )}
-                      </td>
                       <td className="px-5 py-4 text-[0.875rem] font-semibold text-ink">
                         {formatEuros(row.creatorNetCents)}
+                      </td>
+                      <td className="px-5 py-4">
+                        <CollaborationAction
+                          collaborationId={row.id}
+                          status={row.status}
+                          submittedLinkedinUrl={submittedPost(row.posts)?.linkedinUrl ?? null}
+                        />
                       </td>
                     </tr>
                   );
