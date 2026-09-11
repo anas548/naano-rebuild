@@ -75,8 +75,8 @@ and **the creator becomes listable in the brand marketplace**.
 | `/creator/analytics` | Built — public LinkedIn figures, pending while import is paused |
 | `/creator/community` | Built — Slack, LinkedIn visibility, campaign leaderboard |
 | `/creator/earnings` | Built — totals and activity from completed collaborations |
-| `/creator/affiliate` | Placeholder |
-| `/creator/messages` | Placeholder |
+| `/creator/affiliate` | Built — invite brands / invite creators |
+| `/creator/messages` | Built — threads per collaboration |
 
 **My card** is where a creator maintains their storefront: headline, country,
 industries and net price, with the preview updating as they type. Because the
@@ -88,6 +88,12 @@ Applying writes a real `Collaboration` at status `APPLIED`, priced from the
 creator's net rate plus Naano's margin — the same row the brand will later
 accept. The reference gates this tab behind 1,000 followers; that gate is
 dropped here, because LinkedIn import is paused and the count never leaves zero.
+
+**Messages** opens a thread per live collaboration with both the creator and the
+brand as participants, so the brand reads the same conversation from its own
+dashboard once that is built. A NaanoBot thread exists from signup. Declined
+deals get no thread, and membership is checked server-side on both reading a
+thread and posting to it.
 
 **Collaborations** is the other end of Opportunities: applying there puts a row
 here under *Applications sent*, carrying the creator's net figure and what

@@ -30,6 +30,8 @@ Real behaviour, backed by the database.
 | **Analytics** | Reads the profile's real public-LinkedIn figures. Since import is paused these are genuinely zero/pending, which is what the reference shows |
 | **Earnings** | Totals, six-month chart and recent activity derived from **completed collaborations**; an Earning row, where present, decides the payout stage |
 | **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
+| **Messages** | Real threads per collaboration, with the brand and creator both as participants; messages persist and membership is enforced server-side |
+| **Affiliate program** | Both Invite brands and Invite creators views; the creator invite link is genuinely gated on having published a card |
 
 ## Stubbed on purpose
 
@@ -48,7 +50,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **EN/FR switch, notifications bell** | Presentational | No i18n or notification system |
 | **Payout methods and withdrawal** | Bank transfer / Stripe options and the withdraw form render but are disabled | No payment processor; LinkedIn and banking are not connected in this clone |
 | **Community actions** | "Join the Slack community" and "Publish my card" are presentational | No Slack workspace or LinkedIn publishing integration |
-| **Affiliate 25% / 3 months** | Copy is shown on My card | Reward tracking is not implemented; "A creator" in the signup dropdown is an inert option with no referral logic behind it |
+| **Affiliate 25% / 3 months** | Both affiliate views render and links copy | Referral attribution and reward tracking are not implemented, so the stats read zero. Links point at the real signup routes with a `ref` tag rather than 404ing |
 | **Email verification** | Brand signup goes straight through | The 6-digit code screen exists in recon but is not built |
 | **1,000-follower gate** | Not enforced; every creator sees open campaigns | The reference gates Opportunities behind 1,000 followers, but LinkedIn import is paused so the count is always 0 and nobody could ever pass it. Dropped by decision rather than left as a dead end |
 
@@ -58,9 +60,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | --- | --- |
 | **Brand onboarding** | Website analysis, value prop, ICPs, AI matching step |
 | **Brand dashboard** | Overview, Creators, Campaigns, Collaborations, Results, Messages, Billing — currently a placeholder page |
-| **Creator tabs** | Affiliate and Messages are navigable placeholders |
 | **Campaigns and bookings** | No way to create a campaign or invite a creator yet |
-| **Messaging** | `Conversation`/`Message` are modelled; no UI |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
 | **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |

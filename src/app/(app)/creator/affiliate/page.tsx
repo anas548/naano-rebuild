@@ -1,10 +1,29 @@
-import { TabPlaceholder } from "@/components/app/tab-placeholder";
+import { headers } from "next/headers";
+import { requireUser } from "@/lib/session";
+import { getCreatorProfile } from "@/lib/creator";
+import { AffiliatePanels } from "@/components/creator/affiliate-panels";
 
-export default function Page() {
+export default async function CreatorAffiliatePage() {
+  const user = await requireUser();
+  const [profile, headerList] = await Promise.all([
+    getCreatorProfile(user.id),
+    headers(),
+  ]);
+
+  const host = headerList.get("host") ?? "naano.co";
+  const protocol = host.startsWith("localhost") ? "http" : "https";
+  const handle = profile?.cardSlug ?? "you";
+
+  // Referral attribution is not implemented, so these point at the real signup
+  // routes with a ref tag rather than a link that would 404.
   return (
-    <TabPlaceholder
-      title="Affiliate program"
-      note="The referral link and reward tracking come next."
+    <AffiliatePanels
+      brandLink={`${protocol}://${host}/signup/brand?ref=${handle}`}
+      creatorLink={`${protocol}://${host}/signup/creator?ref=${handle}`}
+      cardPublished={Boolean(profile?.onboardingCompleted)}
+      rewardsEarnedCents={0}
+      creatorsInvited={0}
+      earningNow={0}
     />
   );
 }
