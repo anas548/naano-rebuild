@@ -1,5 +1,5 @@
 import { NaanoLogo } from "@/components/naano-logo";
-import { SignOutButton } from "@/components/auth/sign-out-button";
+import { signOutAction } from "@/app/actions/auth";
 
 export function DashboardPlaceholder({
   firstName,
@@ -14,7 +14,14 @@ export function DashboardPlaceholder({
     <div className="flex min-h-screen flex-col bg-[#fcfcfc]">
       <header className="flex items-center justify-between border-b border-neutral-200 px-6 py-4 sm:px-10">
         <NaanoLogo markClassName="xl:h-[1.6rem] xl:w-[2.15rem]" />
-        <SignOutButton />
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="rounded-full border border-neutral-200 bg-white px-4 py-2 text-[0.8125rem] font-medium text-ink/70 transition-colors hover:text-ink"
+          >
+            Sign out
+          </button>
+        </form>
       </header>
 
       <main className="flex flex-1 items-center justify-center px-6 py-16">

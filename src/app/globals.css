@@ -13,6 +13,7 @@
   --font-display: var(--font-display);
   --color-ink: var(--ink);
   --color-naano-blue: var(--naano-blue);
+  --color-naano-violet: var(--naano-violet);
   --color-sky-tint: var(--sky-tint);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -81,6 +82,8 @@
   /* Naano brand */
   --ink: #0b0b0f;
   --naano-blue: #2a64ea;
+  /* the signed-in app leans violet where the marketing site leans blue */
+  --naano-violet: #4a00f6;
   --sky-tint: #eaf4fd;
 
   --sidebar: oklch(0.985 0 0);
