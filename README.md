@@ -52,6 +52,7 @@ Then set up the database and start the app:
 ```bash
 npm run db:migrate   # apply migrations
 npm run db:seed      # seed the 25 industry tags
+npm run db:demo      # optional: demo brands + open campaigns
 npm run dev          # http://localhost:3000
 ```
 
@@ -68,6 +69,7 @@ and without it the list is empty.
 | `npm run db:migrate` | Create and apply a migration |
 | `npm run db:generate` | Regenerate the Prisma client |
 | `npm run db:seed` | Seed industry tags |
+| `npm run db:demo` | Seed demo brands and open campaigns |
 | `npm run db:studio` | Browse the database |
 
 ## Trying it out
@@ -81,6 +83,7 @@ The creator side is the part that is built. The quickest path through it:
 4. Land on the creator dashboard, and open **My card** to edit and preview your
    marketplace card
 5. Your public card is live at `/c/<your-card-slug>`
+6. Run `npm run db:demo`, then open **Opportunities** and apply to a campaign
 
 Signing up as a brand lands on a placeholder dashboard — the brand side has not
 been built yet.

@@ -70,7 +70,7 @@ and **the creator becomes listable in the brand marketplace**.
 | --- | --- |
 | `/creator` | Built — stats, creator card, launch guide |
 | `/creator/card` | Built — Edit/Preview, Deal Link panel |
-| `/creator/opportunities` | Placeholder |
+| `/creator/opportunities` | Built — open campaigns, apply |
 | `/creator/collaborations` | Placeholder |
 | `/creator/analytics` | Placeholder |
 | `/creator/community` | Placeholder |
@@ -83,11 +83,15 @@ industries and net price, with the preview updating as they type. Because the
 onboarding wizard covers the same fields, this doubles as the place to change
 them later. The Deal Link resolves to a real public page at `/c/<slug>`.
 
+**Opportunities** lists every campaign a brand has opened to applications.
+Applying writes a real `Collaboration` at status `APPLIED`, priced from the
+creator's net rate plus Naano's margin — the same row the brand will later
+accept. The reference gates this tab behind 1,000 followers; that gate is
+dropped here, because LinkedIn import is paused and the count never leaves zero.
+
 ### Intended creator journey beyond this point *(not built)*
 
 ```
-Opportunities   open campaigns, gated behind 1,000 followers in the reference
-    └─ apply → Collaboration (APPLIED)
 Collaborations  brand invitations and accepted applications; publish the post
     └─ post published → Post row, metrics tracked
 Earnings        AWAITING_RELEASE → AVAILABLE → withdraw → IN_TRANSIT → PAID

@@ -25,6 +25,7 @@ Real behaviour, backed by the database.
 | **My card** | Edit/Preview, live preview, saves headline, country, industries, price |
 | **Public card page** | `/c/<slug>`, a real page so the Deal Link resolves |
 | **Marketplace listing flag** | Completing a card sets `onboardingCompleted`, the exact condition the brand marketplace will select on |
+| **Opportunities** | Lists open brand campaigns and applying creates a real `Collaboration` (status `APPLIED`), priced from the creator's net rate plus Naano's margin |
 
 ## Stubbed on purpose
 
@@ -43,6 +44,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **EN/FR switch, notifications bell** | Presentational | No i18n or notification system |
 | **Affiliate 25% / 3 months** | Copy is shown on My card | Reward tracking is not implemented; "A creator" in the signup dropdown is an inert option with no referral logic behind it |
 | **Email verification** | Brand signup goes straight through | The 6-digit code screen exists in recon but is not built |
+| **1,000-follower gate** | Not enforced; every creator sees open campaigns | The reference gates Opportunities behind 1,000 followers, but LinkedIn import is paused so the count is always 0 and nobody could ever pass it. Dropped by decision rather than left as a dead end |
 
 ## Not built
 
@@ -50,7 +52,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | --- | --- |
 | **Brand onboarding** | Website analysis, value prop, ICPs, AI matching step |
 | **Brand dashboard** | Overview, Creators, Campaigns, Collaborations, Results, Messages, Billing — currently a placeholder page |
-| **Creator tabs** | Opportunities, Collaborations, Analytics, Community, Earnings, Affiliate, Messages are navigable placeholders |
+| **Creator tabs** | Collaborations, Analytics, Community, Earnings, Affiliate, Messages are navigable placeholders |
 | **Campaigns and bookings** | No way to create a campaign or invite a creator yet |
 | **Messaging** | `Conversation`/`Message` are modelled; no UI |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
@@ -82,6 +84,11 @@ Honest differences, not oversights.
 
 - `npm run db:seed` is required. Onboarding asks for industries and the list is
   empty without it.
-- There is no demo seed for brands, campaigns or collaborations, so tabs that
-  depend on them would render empty even once built. Seeding a demo campaign is
-  the cheapest way to exercise the marketplace loop end to end.
+- `npm run db:demo` seeds three demo brands (lemlist, BlogSEO, LEADBAY) with
+  ICPs and four open campaigns. This exists because the brand side cannot create
+  campaigns yet, and without it Opportunities has nothing to list. It is a
+  development tool, not fake UI: the campaigns it writes are ordinary rows the
+  brand side will later manage.
+- The populated Opportunities list has **no reference screenshot** — only the
+  locked state was captured — so the campaign card layout is an original design
+  in the app's visual language.

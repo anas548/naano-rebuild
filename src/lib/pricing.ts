@@ -18,3 +18,10 @@ export function formatEuros(cents: number) {
     minimumFractionDigits: cents % 100 === 0 ? 0 : 2,
   }).format(cents / 100);
 }
+
+/** Turn an enum value into readable text. CSS capitalisation only changes how
+ *  it looks, leaving the real text lowercase for screen readers. */
+export function humanizeStatus(status: string) {
+  const words = status.toLowerCase().replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
