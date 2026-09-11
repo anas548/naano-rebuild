@@ -12,7 +12,7 @@ export function NaanoLogo({
     <span className={cn("inline-flex items-center gap-2", className)}>
       <svg
         viewBox="0 0 32 24"
-        className="h-6 w-8 shrink-0"
+        className="h-7 w-9 shrink-0 xl:h-9 xl:w-12"
         aria-hidden="true"
         fill="none"
       >
@@ -23,7 +23,7 @@ export function NaanoLogo({
         <circle cx="27.5" cy="18" r="3.5" fill="var(--naano-blue)" />
       </svg>
       {showWordmark && (
-        <span className="font-display text-[1.35rem] font-semibold tracking-tight text-ink">
+        <span className="font-display text-[1.5rem] font-semibold tracking-tight text-ink xl:text-[2rem]">
           naano
         </span>
       )}

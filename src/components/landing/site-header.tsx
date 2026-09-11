@@ -25,17 +25,17 @@ export function SiteHeader() {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-5 py-5 sm:px-8 lg:px-12 2xl:px-16">
         <Link href="/" aria-label="Naano home">
           <NaanoLogo />
         </Link>
 
-        <div className="hidden items-center gap-7 lg:flex">
+        <div className="ml-auto hidden items-center gap-7 lg:flex xl:gap-9">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm text-ink/80 transition-colors hover:text-ink"
+              className="text-[0.9375rem] text-ink/80 transition-colors hover:text-ink xl:text-[1.0625rem]"
             >
               {link.label}
             </Link>
@@ -50,7 +50,7 @@ export function SiteHeader() {
               type="button"
               onClick={() => setResourcesOpen((open) => !open)}
               aria-expanded={resourcesOpen}
-              className="flex items-center gap-1 text-sm text-ink/80 transition-colors hover:text-ink"
+              className="flex items-center gap-1 text-[0.9375rem] text-ink/80 transition-colors hover:text-ink xl:text-[1.0625rem]"
             >
               Resources
               <ChevronDown
@@ -76,19 +76,19 @@ export function SiteHeader() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 lg:ml-10 xl:ml-16 xl:gap-3">
           <button
             type="button"
-            className="hidden items-center gap-1 px-2 text-sm text-ink/70 transition-colors hover:text-ink sm:flex"
+            className="hidden items-center gap-1.5 px-2 text-[0.9375rem] text-ink/70 transition-colors hover:text-ink sm:flex xl:text-base"
           >
-            <Globe className="size-4" />
+            <Globe className="size-4 xl:size-[1.125rem]" />
             EN
           </button>
           <Button render={<Link href="/signin" />}
             variant="secondary"
-            className="hidden rounded-full bg-white px-5 text-ink shadow-sm hover:bg-white/90 sm:inline-flex">Sign in</Button>
+            className="hidden h-11 rounded-full bg-white px-6 text-[0.9375rem] text-ink shadow-sm hover:bg-white/90 sm:inline-flex xl:h-12 xl:px-7 xl:text-base">Sign in</Button>
           <Button render={<Link href="/signup" />}
-            className="rounded-full bg-ink px-5 text-white hover:bg-ink/90">Sign up</Button>
+            className="h-11 rounded-full bg-ink px-6 text-[0.9375rem] text-white hover:bg-ink/90 xl:h-12 xl:px-7 xl:text-base">Sign up</Button>
           <button
             type="button"
             onClick={() => setMobileOpen((open) => !open)}

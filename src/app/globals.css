@@ -142,30 +142,39 @@
 /* Naano's hero and section backdrops use cloud photography. Those assets aren't
    in the recon set, so this approximates the sky with layered gradients. */
 @utility sky-backdrop {
-  background-color: #a9d2f5;
+  background-color: #bcdcf6;
   background-image:
+    /* cloud masses hugging the left and right edges */
     radial-gradient(
-      140% 60% at 50% 108%,
-      rgba(255, 255, 255, 0.98) 0%,
-      rgba(255, 255, 255, 0.7) 28%,
-      rgba(255, 255, 255, 0) 62%
-    ),
-    radial-gradient(
-      44% 26% at 14% 86%,
+      38% 34% at -4% 52%,
       rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0) 70%
+      rgba(255, 255, 255, 0.45) 45%,
+      rgba(255, 255, 255, 0) 72%
     ),
     radial-gradient(
-      40% 24% at 86% 82%,
+      34% 30% at 104% 60%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0.4) 45%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    radial-gradient(
+      26% 20% at 12% 88%,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    radial-gradient(
+      24% 18% at 88% 90%,
       rgba(255, 255, 255, 0.9) 0%,
-      rgba(255, 255, 255, 0) 70%
+      rgba(255, 255, 255, 0) 72%
     ),
+    /* haze lifting off the bottom edge */
     radial-gradient(
-      30% 18% at 62% 94%,
-      rgba(255, 255, 255, 0.85) 0%,
+      130% 46% at 50% 104%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.62) 34%,
       rgba(255, 255, 255, 0) 70%
     ),
-    linear-gradient(180deg, #8ec4f0 0%, #b4daf7 38%, #dceffd 72%, #f4fbff 100%);
+    linear-gradient(180deg, #a7d2f2 0%, #c2e0f8 42%, #e2f1fd 74%, #f7fcff 100%);
 }
 
 @utility sky-fade {
