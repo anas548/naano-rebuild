@@ -1,0 +1,346 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Identity
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  BRAND
+  CREATOR
+}
+
+enum HeardAboutUs {
+  LINKEDIN
+  WORD_OF_MOUTH
+  GOOGLE_SEARCH
+  A_CREATOR
+  OTHER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?
+  firstName    String
+  lastName     String
+  role         UserRole
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  brand         Brand?
+  creator       CreatorProfile?
+  messages      Message[]
+  conversations Conversation[]  @relation("ConversationParticipants")
+}
+
+// ---------------------------------------------------------------------------
+// Brand side
+// ---------------------------------------------------------------------------
+
+model Brand {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name             String
+  websiteUrl       String?
+  logoUrl          String?
+  valueProposition String?       @db.Text
+  heardAboutUs     HeardAboutUs?
+
+  // Brand wallet, in euro cents.
+  balanceCents Int @default(0)
+
+  onboardingCompleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  icps      Icp[]
+  campaigns Campaign[]
+  invoices  Invoice[]
+}
+
+/// The 3 ideal customer profiles derived from the brand's website during onboarding.
+model Icp {
+  id      String @id @default(cuid())
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  rank        Int
+  title       String
+  description String @db.Text
+
+  @@unique([brandId, rank])
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+}
+
+model Campaign {
+  id      String @id @default(cuid())
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  name String
+
+  // The starter creator brief shown to every invited creator.
+  briefProduct  String? @db.Text
+  briefAudience String? @db.Text
+
+  status               CampaignStatus @default(DRAFT)
+  committedBudgetCents Int            @default(0)
+
+  /// Whether creators can apply to this campaign from the Opportunities tab.
+  openToApplications Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  collaborations Collaboration[]
+}
+
+// ---------------------------------------------------------------------------
+// Creator side
+// ---------------------------------------------------------------------------
+
+/// LinkedIn import is stubbed as permanently paused for now, so every creator
+/// falls back to a "Basic" card built from what they type in onboarding.
+enum LinkedInImportStatus {
+  PAUSED
+  IMPORTED
+}
+
+model Industry {
+  id    String @id @default(cuid())
+  slug  String @unique
+  label String
+
+  creators CreatorProfile[]
+}
+
+model CreatorProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  cardSlug String @unique
+
+  linkedinUrl          String?
+  linkedinImportStatus LinkedInImportStatus @default(PAUSED)
+
+  country   String?
+  headline  String?
+  avatarUrl String?
+
+  /// Creator's net price per post, in euro cents.
+  pricePerPostCents Int @default(0)
+
+  // Public LinkedIn metrics; all pending until a public-data import runs.
+  followerCount     Int @default(0)
+  publicPostCount   Int @default(0)
+  publicEngagements Int @default(0)
+  publicPostReach   Int @default(0)
+
+  // Optional professional info, required in the EU to invoice and withdraw.
+  businessName         String?
+  businessRegistration String?
+
+  onboardingCompleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  industries     Industry[]
+  collaborations Collaboration[]
+  payoutMethods  PayoutMethod[]
+  withdrawals    Withdrawal[]
+}
+
+// ---------------------------------------------------------------------------
+// The deal between a brand campaign and a creator
+// ---------------------------------------------------------------------------
+
+enum CollaborationStatus {
+  INVITED
+  APPLIED
+  ACTIVE
+  NEEDS_ACTION
+  DECLINED
+  COMPLETED
+}
+
+model Collaboration {
+  id         String   @id @default(cuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  creatorId String
+  creator   CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  status     CollaborationStatus @default(INVITED)
+  nextAction String?
+  dueDate    DateTime?
+
+  /// What the brand commits, in euro cents.
+  amountCents     Int @default(0)
+  /// What the creator receives after Naano's cut, in euro cents.
+  creatorNetCents Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts        Post[]
+  earning      Earning?
+  conversation Conversation?
+
+  @@unique([campaignId, creatorId])
+}
+
+model Post {
+  id              String        @id @default(cuid())
+  collaborationId String
+  collaboration   Collaboration @relation(fields: [collaborationId], references: [id], onDelete: Cascade)
+
+  linkedinUrl String?
+  publishedAt DateTime?
+
+  impressions     Int @default(0)
+  reactions       Int @default(0)
+  comments        Int @default(0)
+  reposts         Int @default(0)
+  qualifiedClicks Int @default(0)
+}
+
+// ---------------------------------------------------------------------------
+// Messaging
+// ---------------------------------------------------------------------------
+
+model Conversation {
+  id String @id @default(cuid())
+
+  /// Null for the NaanoBot system thread that exists before any booking.
+  collaborationId String?        @unique
+  collaboration   Collaboration? @relation(fields: [collaborationId], references: [id], onDelete: Cascade)
+
+  isSystem  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  participants User[]    @relation("ConversationParticipants")
+  messages     Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  /// Null when the message comes from NaanoBot.
+  senderId String?
+  sender   User?   @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Money
+// ---------------------------------------------------------------------------
+
+enum InvoiceType {
+  TOP_UP
+  BOOKING
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model Invoice {
+  id      String @id @default(cuid())
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  reference   String        @unique
+  type        InvoiceType
+  amountCents Int
+  status      InvoiceStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
+
+enum EarningStatus {
+  AWAITING_RELEASE
+  AVAILABLE
+  IN_TRANSIT
+  PAID
+}
+
+model Earning {
+  id              String        @id @default(cuid())
+  collaborationId String        @unique
+  collaboration   Collaboration @relation(fields: [collaborationId], references: [id], onDelete: Cascade)
+
+  netCents   Int
+  status     EarningStatus @default(AWAITING_RELEASE)
+  releasedAt DateTime?
+
+  createdAt DateTime @default(now())
+}
+
+enum PayoutMethodType {
+  BANK_TRANSFER
+  STRIPE
+}
+
+model PayoutMethod {
+  id        String         @id @default(cuid())
+  creatorId String
+  creator   CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  type       PayoutMethodType
+  isSelected Boolean          @default(false)
+
+  bankAccountHolder String?
+  bankDetails       String?
+  stripeConnected   Boolean @default(false)
+
+  withdrawals Withdrawal[]
+
+  @@unique([creatorId, type])
+}
+
+enum WithdrawalStatus {
+  PENDING
+  IN_TRANSIT
+  PAID
+  FAILED
+}
+
+model Withdrawal {
+  id        String         @id @default(cuid())
+  creatorId String
+  creator   CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  payoutMethodId String?
+  payoutMethod   PayoutMethod? @relation(fields: [payoutMethodId], references: [id], onDelete: SetNull)
+
+  amountCents Int
+  status      WithdrawalStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
