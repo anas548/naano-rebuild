@@ -112,38 +112,61 @@ Earnings        totals come from COMPLETED collaborations; withdrawal itself
 
 ## Brand journey
 
-Signing up as a brand works and creates a `User` + `Brand`, but lands on a
-placeholder dashboard. Everything below is **not built**.
-
-### Intended onboarding
+### Onboarding — built end to end
 
 ```
-/signup/brand           choose signup method
-/signup/brand/email     name, business email, password, how-did-you-hear  ← built
+/signup/brand              choose signup method
+/signup/brand/email        name, business email, password, how-did-you-hear  ← built
         ↓
-email verification      6-digit code                                      ← not built
+email verification         6-digit code                                      ← not built
         ↓
-step 1 of 3   website URL — analysed to infer the product
-step 2 of 3   value proposition + 3 ICPs, editable; starter creator brief
-step 3 of 3   AI matching — loads, then opens the dashboard
+/signup/brand/website      step 1 of 3 — website URL
+/signup/brand/icp          step 2 of 3 — value proposition + 3 ICPs, editable
+/signup/brand/matching     step 3 of 3 — "AI matching" loading beat
+        ↓
+/brand                     dashboard
 ```
 
-Per agreed scope, AI matching **just loads and then opens the dashboard**. There
-is no model call; the website analysis and ICPs would be seeded demo content.
+**Step 1** looks up a small canned table by domain (`src/lib/website-analysis.ts`)
+and writes a draft `Brand.name`, `valueProposition` and 3 `Icp` rows —
+recognisable domains (apple.com, lemlist.com, stripe.com, notion.so, figma.com)
+get hand-written copy; anything else gets a generic B2B fallback. Nothing is
+actually crawled.
+
+**Step 2** is a real edit surface, not a read-only review: the value
+proposition and all 3 ICP title/descriptions are editable, with a live
+"Starter creator brief" preview. Submitting writes the edits back to `Brand`
+and `Icp`, and upserts one starter `Campaign` (`"{name} creator brief"`,
+`status: ACTIVE`, `openToApplications: true`) whose brief mirrors the edited
+text — this is the campaign creators will see on Opportunities once the
+Marketplace can invite them to it.
+
+**Step 3** holds on a fake "reading your brief / scanning creators / ranking by
+fit" loading beat for ~2 seconds, then marks `Brand.onboardingCompleted = true`
+and redirects to `/brand`. No model call, no real matching — per agreed scope.
+
+The `/brand` layout enforces this: an incomplete brand hitting `/brand` or any
+finished onboarding route is bounced back to wherever they left off
+(`nextOnboardingStep` in `src/lib/brand-onboarding.ts`), the same way signing
+back in mid-onboarding resumes rather than dropping onto a broken dashboard.
 
 `Brand.name` stays null until the website step, which is why it is nullable.
 
-### Intended brand dashboard
+### Brand dashboard
 
-| Tab | Purpose |
+| Route | State |
 | --- | --- |
-| Overview | Activation stats, to-do list, suggested creators |
-| Creators | AI matching chat + marketplace browse — **this is where listed creators appear** |
-| Campaigns | Campaign list with creators, published count, committed budget |
-| Collaborations | The same deal rows creators see, from the brand side |
-| Results | Reach, qualified clicks, per-creator attribution, tracking pixel |
-| Messages | Opens once a booking is accepted |
-| Billing | Wallet balance, top-ups, invoices |
+| `/brand` | Built — hello banner, 4 real stat cards (creators activated, posts published, profiles engaged, impressions), all zero until Campaigns/Marketplace exist |
+| `/brand/creators` | Not built — AI matching chat (static) + marketplace browse (functional) — **this is where listed creators will appear** |
+| `/brand/campaigns` | Not built — campaign list with creators, published count, committed budget |
+| `/brand/collaborations` | Not built — the same deal rows creators see, from the brand side; accept/decline and mark-complete live here |
+| `/brand/results` | Not built — reach, qualified clicks, per-creator attribution, tracking pixel |
+| `/brand/messages` | Not built — reuses the same `Conversation` rows the creator inbox already writes |
+| `/brand/billing` | Not built — wallet balance (already shown live in the top bar), top-ups, invoices |
+
+The sidebar, top bar (with the real `Brand.balanceCents`) and all 7 routes
+exist and are guarded by role and onboarding state; the pages themselves past
+Overview are next.
 
 ### Where the two sides meet
 

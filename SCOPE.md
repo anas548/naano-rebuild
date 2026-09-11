@@ -32,6 +32,9 @@ Real behaviour, backed by the database.
 | **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
 | **Messages** | Real threads per collaboration, with the brand and creator both as participants; messages persist and membership is enforced server-side |
 | **Affiliate program** | Both Invite brands and Invite creators views; the creator invite link is genuinely gated on having published a card |
+| **Brand onboarding** | Website → value prop &amp; ICP → AI matching, all three steps persisting to `Brand`/`Icp` as they go, including a real starter `Campaign` seeded from the edited brief |
+| **Brand app shell** | Sidebar (7 tabs), top bar with the real wallet balance, resume-mid-onboarding and cross-role guards |
+| **Brand Overview** | Hello banner, 4 stat cards reading real `Collaboration`/`Post` rows (all zero until Campaigns/Marketplace exist to populate them) |
 
 ## Stubbed on purpose
 
@@ -42,7 +45,8 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **Auth strength** | Cookie holds the raw user id, unsigned | Agreed lightweight approach. **Anyone who can set a cookie can impersonate any user** — must be replaced before anything real ships |
 | **OAuth buttons** | LinkedIn and Google buttons are inert | Out of scope for stub auth; only email is wired |
 | **LinkedIn import** | URL is validated and stored, nothing is fetched; the "temporarily paused" notice shows | Agreed to hardcode as paused. Consequence: follower counts and post metrics stay at zero |
-| **AI matching** | Not implemented; intended to load, then open the dashboard | Agreed demo behaviour, no model call |
+| **AI matching** | Onboarding step 3 is a real loading beat, then marks onboarding complete and opens the dashboard — no model call. The Creators tab's own AI Matching view (chat UI, suggested prompts) is not built yet; that's Creator Marketplace/Campaigns work | Agreed demo behaviour by explicit decision: Marketplace is the functional discovery path, AI Matching stays UI-only because the user has a different real-matching plan later |
+| **Website analysis** | A canned per-domain lookup (`src/lib/website-analysis.ts`) returns a value proposition and 3 ICPs for a handful of recognisable domains (apple.com, lemlist.com, stripe.com, notion.so, figma.com); anything else gets a generic B2B fallback. Nothing is actually fetched or crawled. Everything is editable on the next step | Explicit decision: canned, editable, beats either a blank form or pretending to be a real analysis |
 | **Payments** | Money is fully modelled but nothing moves | Demo only, no payment processor |
 | **Match scores** | Not computed yet | Intended to be derived from ICP/industry overlap at render time |
 | **Avatar menu items** | Integrations, Settings, Guided tour render but do nothing | Only sign-out is wired |
@@ -58,12 +62,16 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 
 | Area | Notes |
 | --- | --- |
-| **Brand onboarding** | Website analysis, value prop, ICPs, AI matching step |
-| **Brand dashboard** | Overview, Creators, Campaigns, Collaborations, Results, Messages, Billing — currently a placeholder page |
-| **Campaigns and bookings** | No way to create a campaign or invite a creator yet |
+| **Creator Marketplace / AI Matching (Creators tab)** | Browsing real creators and inviting one to a campaign; the AI Matching chat UI |
+| **Campaigns page** | Campaign list/detail UI; onboarding already creates one real starter campaign per brand |
+| **Collaborations (brand side)** | Accepting/declining, wallet-gated booking, marking a submitted post complete |
+| **Results, Messages, Billing (brand side)** | Pages not built yet; `AppTopbar` already shows the real wallet balance |
+| **Bookings** | No way to invite a creator to a campaign yet |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
 | **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |
+| **"NAANO MCP / Connect" breadcrumb** | Shown at the top of every brand screenshot; out of scope by explicit decision, so not built |
+| **"Get started" checklist pill** | The `1/3 Discover the Market...` progress pill in the brand top bar; decorative, not built |
 
 ## Known deviations from the reference
 

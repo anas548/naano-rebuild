@@ -74,7 +74,9 @@ and without it the list is empty.
 
 ## Trying it out
 
-The creator side is the part that is built. The quickest path through it:
+The creator side is fully built; on the brand side, onboarding and the app
+shell are built, the rest of the dashboard is not yet. The quickest path
+through it:
 
 1. Go to `/signup` and choose **I'm a creator**
 2. Sign up with email — OAuth buttons are intentionally inert
@@ -85,8 +87,24 @@ The creator side is the part that is built. The quickest path through it:
 5. Your public card is live at `/c/<your-card-slug>`
 6. Run `npm run db:demo`, then open **Opportunities** and apply to a campaign
 
-Signing up as a brand lands on a placeholder dashboard — the brand side has not
-been built yet.
+To see the brand side, go to `/signup` and choose **I'm a brand**, sign up with
+email, then try the 3-step onboarding: enter any website (try `apple.com`,
+`lemlist.com`, `stripe.com`, `notion.so` or `figma.com` for hand-written
+results — anything else gets a generic fallback), edit the value proposition
+and 3 ICPs, then continue through the AI Matching loading step to land on the
+dashboard. Past Overview, the rest of the brand tabs are not built yet.
+
+### Demo brand login
+
+`npm run db:demo` seeds 3 brands with a completed onboarding, a €10,000
+wallet balance, and open campaigns, so a fresh signup isn't the only way to
+see a populated brand account:
+
+| Email | Password |
+| --- | --- |
+| `demo-brand-lemlist@naano.demo` | `demo-password` |
+| `demo-brand-blogseo@naano.demo` | `demo-password` |
+| `demo-brand-leadbay@naano.demo` | `demo-password` |
 
 ## A note on `.agent-logs/`
 

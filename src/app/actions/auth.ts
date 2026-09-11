@@ -22,7 +22,7 @@ const HOME_FOR: Record<UserRole, string> = {
 
 // A new creator goes straight into the card-building steps.
 const AFTER_SIGNUP: Record<UserRole, string> = {
-  BRAND: "/brand",
+  BRAND: "/signup/brand/website",
   CREATOR: "/signup/creator/linkedin",
 };
 

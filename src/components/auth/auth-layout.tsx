@@ -11,6 +11,8 @@ type AuthLayoutProps = {
   panelTone?: "blue" | "light";
   back?: { href: string; label: string };
   step?: string;
+  /** Renders a segmented progress bar above the step label, e.g. {current: 1, total: 3}. */
+  progress?: { current: number; total: number };
 };
 
 export function AuthLayout({
@@ -19,6 +21,7 @@ export function AuthLayout({
   panelTone = "blue",
   back,
   step,
+  progress,
 }: AuthLayoutProps) {
   return (
     <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
@@ -51,9 +54,24 @@ export function AuthLayout({
             </Link>
           )}
           {step && (
-            <p className="mb-3 text-[0.6875rem] font-semibold tracking-[0.12em] text-naano-blue uppercase">
-              {step}
-            </p>
+            <div className="mb-6 flex items-center gap-3">
+              <p className="shrink-0 text-[0.6875rem] font-semibold tracking-[0.12em] text-naano-blue uppercase">
+                {step}
+              </p>
+              {progress && (
+                <div className="flex flex-1 gap-1.5">
+                  {Array.from({ length: progress.total }, (_, i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        "h-1.5 flex-1 rounded-full",
+                        i < progress.current ? "bg-naano-blue" : "bg-neutral-200",
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           )}
           {children}
         </div>
