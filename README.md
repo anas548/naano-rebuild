@@ -72,6 +72,11 @@ and without it the list is empty.
 | `npm run db:demo` | Seed demo brands and open campaigns |
 | `npm run db:studio` | Browse the database |
 
+[`scripts/verify/`](scripts/verify/) holds a handful of Playwright scripts
+that check specific flows end to end (the collaboration loop, withdrawals,
+unread messages) against a running dev server — not a full test suite, a
+record of how the trickier parts were actually verified. See its own README.
+
 ## Trying it out
 
 Both sides are fully built and the marketplace loop runs end to end. The
@@ -112,6 +117,9 @@ dashboard. From there:
    the committed budget/booking count on Analytics
 9. Open **Messages** on either side and send something — it shows up in the
    other side's inbox, since it's the same conversation
+10. As the creator, open **Earnings** and **Withdraw** part of the balance —
+    it's an instant simulated Stripe payout, shows up in Recent activity as
+    Paid, and "Withdraw all" always fills the exact remainder
 
 ### Demo brand login
 

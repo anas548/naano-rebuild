@@ -74,7 +74,7 @@ and **the creator becomes listable in the brand marketplace**.
 | `/creator/collaborations` | Built — tabbed table of the creator's deals, with real accept/decline and post-submission actions |
 | `/creator/analytics` | Built — public LinkedIn figures, pending while import is paused |
 | `/creator/community` | Built — Slack, LinkedIn visibility, campaign leaderboard |
-| `/creator/earnings` | Built — totals and activity from completed collaborations |
+| `/creator/earnings` | Built — totals and activity from completed collaborations, plus a real withdraw flow (partial, "withdraw all", over-limit rejected, instant simulated Stripe payout) |
 | `/creator/affiliate` | Built — invite brands / invite creators |
 | `/creator/messages` | Built — threads per collaboration |
 
@@ -138,7 +138,18 @@ post, the collaboration becomes `COMPLETED` with no `Earning` row created —
 and the Earnings page already treated a `COMPLETED` collaboration with no
 `Earning` row as fully `AVAILABLE` (see its own comment), so the creator's
 totals update the moment the brand clicks Approve, with no extra wiring.
-Withdrawal itself (bank transfer or Stripe) is still not wired.
+
+**Withdrawing** is real, not a dead end: a creator withdraws part or all of
+their available balance to a simulated Stripe payout. The available pool is
+`sum(AVAILABLE earnings) − sum(every Withdrawal ever made)` — deliberately
+not tied to any specific collaboration, so a partial withdrawal never needs
+to split one. Over-withdrawing is rejected server-side (not just a browser
+`max`, so the error is the app's own styled message, not a native tooltip).
+A withdrawal resolves instantly to `PAID` — matching the "Instant transfer"
+copy — and shows in Recent activity with a negative amount next to the
+positive earnings it drew down. Bank transfer stays an inert stub; "connecting"
+Stripe is implicit on the first withdrawal, since there's no real account to
+connect in a demo.
 
 ## Brand journey
 
@@ -248,15 +259,20 @@ Either side accepts      → Invoice(BOOKING) → Brand.balanceCents ↓        
 Brand approves the post  → Collaboration → COMPLETED                        built
                             (no Earning row — the creator's balance is
                              simply the sum of their COMPLETED collabs)
-Creator withdraws         → Withdrawal(PENDING → IN_TRANSIT → PAID)         not built
-                             via PayoutMethod (BANK_TRANSFER | STRIPE)
+Creator withdraws         → Withdrawal(amount, status: PAID)                built
+                             via PayoutMethod (STRIPE only; instant, demo)
 ```
 
 The brand pays `creatorNetCents` plus Naano's margin; the difference is the
 platform's cut (`src/lib/pricing.ts`). Every transition above that moves
-money — top-up, booking, and the wallet gate that guards booking — runs
-inside a single `prisma.$transaction`, so the wallet and the invoice ledger
-can't drift apart. The `Earning` model still exists for a withdrawal-stage
-concept (`AWAITING_RELEASE` → `IN_TRANSIT` → `PAID`) but nothing writes one
-yet — completing a collaboration is enough for its money to count as
-available, which is as far as this clone's money flow goes.
+money — top-up, booking, the wallet gate that guards booking, and a
+withdrawal — runs inside a single `prisma.$transaction`, so nothing can
+drift apart. The `Earning` model still exists for a withdrawal-stage concept
+(`AWAITING_RELEASE` → `IN_TRANSIT` → `PAID`) but nothing writes one — a
+completed collaboration counts as available the moment it's approved, and a
+withdrawal resolves straight to `PAID` rather than sitting in transit, since
+there's no real bank/Stripe network for it to travel through. `available`
+itself is computed, not stored: `getCreatorEarnings()` in `src/lib/earnings.ts`
+is the one place both the Earnings page and the withdraw action agree on
+what "available" means, so a withdrawal can never validate against one
+number and display another.

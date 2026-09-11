@@ -1,7 +1,8 @@
-import { Building2, CreditCard, TrendingUp, Wallet } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { CreditCard, TrendingUp, Wallet } from "lucide-react";
 import { requireUser } from "@/lib/session";
+import { getCreatorEarnings } from "@/lib/earnings";
 import { formatEuros, humanizeStatus } from "@/lib/pricing";
+import { WithdrawForm } from "@/components/creator/withdraw-form";
 
 function lastSixMonths() {
   const now = new Date();
@@ -14,31 +15,9 @@ function lastSixMonths() {
 export default async function CreatorEarningsPage() {
   const user = await requireUser();
 
-  // Earnings come from completed collaborations. Where an Earning row exists it
-  // decides the payout stage; otherwise the money is simply available.
-  const completed = await prisma.collaboration.findMany({
-    where: { creator: { userId: user.id }, status: "COMPLETED" },
-    orderBy: { updatedAt: "desc" },
-    include: {
-      earning: { select: { status: true, releasedAt: true } },
-      campaign: { include: { brand: { select: { name: true } } } },
-    },
-  });
+  const { completed, stageOf, totalEarned, inTransit, available, awaitingRelease, withdrawals } =
+    await getCreatorEarnings(user.id);
 
-  const stageOf = (row: (typeof completed)[number]) =>
-    row.earning?.status ?? "AVAILABLE";
-
-  const sumWhere = (stage: string) =>
-    completed
-      .filter((row) => stageOf(row) === stage)
-      .reduce((n, row) => n + row.creatorNetCents, 0);
-
-  const totalEarned = completed.reduce((n, row) => n + row.creatorNetCents, 0);
-  const inTransit = sumWhere("IN_TRANSIT");
-  const available = sumWhere("AVAILABLE");
-  const awaitingRelease = completed.filter(
-    (row) => stageOf(row) === "AWAITING_RELEASE",
-  ).length;
   const paidCount = completed.length;
   const average = paidCount > 0 ? Math.round(totalEarned / paidCount) : 0;
 
@@ -57,6 +36,31 @@ export default async function CreatorEarningsPage() {
     { icon: Wallet, label: "In transit", value: inTransit, caption: "International transfers usually arrive within 1–7 days, depending on the destination and banking network." },
     { icon: CreditCard, label: "Available now", value: available, caption: "Ready to withdraw to your selected payout method." },
   ];
+
+  // One combined feed, newest first: money coming in (completed
+  // collaborations) and money going out (withdrawals).
+  type ActivityRow =
+    | { kind: "earning"; date: Date; id: string; label: string; status: string; amountCents: number }
+    | { kind: "withdrawal"; date: Date; id: string; label: string; status: string; amountCents: number };
+
+  const activity: ActivityRow[] = [
+    ...completed.map((row): ActivityRow => ({
+      kind: "earning",
+      date: row.earning?.releasedAt ?? row.updatedAt,
+      id: row.id,
+      label: `${row.campaign.brand.name ?? "Brand"} · ${row.campaign.name}`,
+      status: stageOf(row),
+      amountCents: row.creatorNetCents,
+    })),
+    ...withdrawals.map((w): ActivityRow => ({
+      kind: "withdrawal",
+      date: w.createdAt,
+      id: w.id,
+      label: `Withdrawal to ${w.payoutMethod?.type === "BANK_TRANSFER" ? "bank account" : "Stripe"}`,
+      status: w.status,
+      amountCents: w.amountCents,
+    })),
+  ].sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
     <div className="mx-auto max-w-[1400px]">
@@ -137,60 +141,7 @@ export default async function CreatorEarningsPage() {
             Choose where your available balance should be sent.
           </p>
 
-          <p className="mt-5 text-[0.6875rem] font-semibold tracking-[0.08em] text-ink/50 uppercase">
-            Payout method
-          </p>
-
-          <div className="mt-3 space-y-3">
-            <label className="flex cursor-not-allowed gap-3 rounded-xl border border-[#e6e8ef] p-4">
-              <input type="radio" name="payout" disabled className="mt-1" />
-              <span className="min-w-0">
-                <span className="flex items-center gap-2 text-[0.875rem] font-semibold text-ink">
-                  <Building2 className="size-4 text-ink/50" />
-                  Bank transfer
-                </span>
-                <span className="mt-1 block text-[0.8125rem] text-ink/50">
-                  No account holder on file
-                </span>
-                <span className="block text-[0.8125rem] text-ink/50">
-                  No bank details on file
-                </span>
-              </span>
-            </label>
-
-            <label className="flex cursor-not-allowed gap-3 rounded-xl border-2 border-naano-violet bg-[#faf8ff] p-4">
-              <input type="radio" name="payout" disabled defaultChecked className="mt-1" />
-              <span className="min-w-0">
-                <span className="flex items-center gap-2 text-[0.875rem] font-semibold text-ink">
-                  <CreditCard className="size-4 text-ink/50" />
-                  Stripe
-                </span>
-                <span className="mt-1 block text-[0.8125rem] text-ink/50">
-                  Status: Not connected
-                </span>
-                <span className="block text-[0.8125rem] text-ink/50">
-                  Instant transfer to your connected Stripe account.
-                </span>
-              </span>
-            </label>
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <span className="flex-1 rounded-xl border border-[#e6e8ef] px-4 py-2.5 text-[0.875rem] text-ink/35">
-              € Amount
-            </span>
-            <span className="rounded-xl border border-[#e6e8ef] px-4 py-2.5 text-[0.875rem] text-ink/45">
-              Withdraw all
-            </span>
-          </div>
-
-          <button
-            type="button"
-            disabled
-            className="mt-3 w-full rounded-xl bg-naano-violet py-3 text-[0.875rem] font-semibold text-white opacity-50"
-          >
-            Confirm withdrawal
-          </button>
+          <WithdrawForm availableCents={available} />
 
           <p className="mt-4 rounded-xl bg-neutral-50 px-4 py-3 text-[0.8125rem] text-ink/55">
             {awaitingRelease === 0
@@ -232,34 +183,38 @@ export default async function CreatorEarningsPage() {
           ))}
         </div>
 
-        {completed.length === 0 ? (
+        {activity.length === 0 ? (
           <p className="py-12 text-center text-[0.875rem] text-ink/50">
             No earnings yet. Completed collaborations will appear here.
           </p>
         ) : (
           <ul className="mt-1">
-            {completed.map((row) => (
+            {activity.map((row) => (
               <li
-                key={row.id}
+                key={`${row.kind}-${row.id}`}
                 className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-100 py-4 last:border-b-0"
               >
                 <span className="min-w-0">
                   <span className="block text-[0.875rem] font-semibold text-ink">
-                    {row.campaign.brand.name ?? "Brand"} · {row.campaign.name}
+                    {row.label}
                   </span>
                   <span className="block text-[0.75rem] text-ink/45">
-                    {(row.earning?.releasedAt ?? row.updatedAt).toLocaleDateString(
-                      "en-GB",
-                      { day: "numeric", month: "short", year: "numeric" },
-                    )}
+                    {row.date.toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
                   </span>
                 </span>
                 <span className="flex items-center gap-3">
                   <span className="rounded-md bg-neutral-100 px-2.5 py-1 text-[0.75rem] font-semibold text-ink/60">
-                    {humanizeStatus(stageOf(row))}
+                    {humanizeStatus(row.status)}
                   </span>
-                  <span className="text-[0.875rem] font-semibold text-ink">
-                    {formatEuros(row.creatorNetCents)}
+                  <span
+                    className={`text-[0.875rem] font-semibold ${row.kind === "withdrawal" ? "text-ink/70" : "text-ink"}`}
+                  >
+                    {row.kind === "withdrawal" ? "−" : ""}
+                    {formatEuros(row.amountCents)}
                   </span>
                 </span>
               </li>

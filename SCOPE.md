@@ -29,6 +29,7 @@ Real behaviour, backed by the database.
 | **Collaborations (creator side)** | Tabbed table of the creator's deals with live counts. **Accept/decline** an invitation, **submit** the LinkedIn post link once active (editable until approved) — all real actions, not just a status display |
 | **Analytics** | Reads the profile's real public-LinkedIn figures. Since import is paused these are genuinely zero/pending, which is what the reference shows |
 | **Earnings** | Totals, six-month chart and recent activity derived from **completed collaborations**; an Earning row, where present, decides the payout stage |
+| **Withdrawals** | A real, functional withdraw form (`src/lib/earnings.ts`, `src/app/actions/withdrawals.ts`): server-validated against the actual available balance (not just a browser `max`), a partial withdrawal draws down the pool via `available = earned − everything ever withdrawn` (no `Earning` rows need to change), resolves instantly to a `Withdrawal` row with status `PAID` — matching the Stripe "instant transfer" copy — and shows in Recent activity with a real Paid badge and a negative amount. "Withdraw all" fills the exact remainder, not the original total. Demo money, real ledger: no payment processor moves anything, but nothing about the flow is a dead end |
 | **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
 | **Messages** | Real threads per collaboration, shared between the creator and brand inboxes (one `MessagesView` component, two pages) — a message either side sends appears in the other's inbox immediately, membership is enforced server-side |
 | **Unread messages** | A `ConversationRead` row per (conversation, user) tracks when each side last opened a thread; a conversation is unread when its latest message postdates that mark (or there's no mark) and wasn't sent by the viewer. The sidebar's Messages nav item shows a live count badge, and each conversation row shows bold text + a dot until opened — both update in place on click, no reload, via a server action that revalidates the persisted layout (not just the page) |
@@ -60,7 +61,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **Avatar menu items** | Integrations, Settings, Guided tour render but do nothing | Only sign-out is wired |
 | **"Add a bundle"** | Inert button on the price step | Bundles are not modelled |
 | **EN/FR switch, notifications bell** | Presentational | No i18n or notification system |
-| **Payout methods and withdrawal** | Bank transfer / Stripe options and the withdraw form render but are disabled | No payment processor; LinkedIn and banking are not connected in this clone |
+| **Bank transfer payout** | The option renders but stays disabled ("No account holder on file") | No bank-detail capture form is built; Stripe is the one functional payout method — see below |
 | **Community actions** | "Join the Slack community" and "Publish my card" are presentational | No Slack workspace or LinkedIn publishing integration |
 | **Affiliate 25% / 3 months** | Both affiliate views render and links copy | Referral attribution and reward tracking are not implemented, so the stats read zero. Links point at the real signup routes with a `ref` tag rather than 404ing |
 | **Email verification** | Brand signup goes straight through | The 6-digit code screen exists in recon but is not built |
@@ -73,7 +74,6 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | Area | Notes |
 | --- | --- |
 | **Post metric ingestion, tracking pixel** | `Post.impressions/reactions/comments/qualifiedClicks` are modelled and displayed on both Results and Earnings, but nothing ever writes a non-zero value into them — there's no LinkedIn API call and no pixel. Genuinely zero, not hidden |
-| **Withdrawal** | Bank transfer / Stripe payout is displayed but disabled — see the creator Earnings stub entry above |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
 | **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |
 | **"NAANO MCP / Connect" breadcrumb** | Shown at the top of every brand screenshot; out of scope by explicit decision, so not built |
