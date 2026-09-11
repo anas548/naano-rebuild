@@ -90,6 +90,64 @@ const BRANDS = [
   },
 ];
 
+
+// Demo creators, so the Community leaderboard and the future brand marketplace
+// have real rows to read. Numbers are illustrative demo data, not imported.
+const CREATORS = [
+  ["Eric", "Djavid", "Sales Leader | B2B", ["B2B", "Sales"], "FR", 40000, 265000, 62500],
+  ["Thomas", "Marcelle", "Founder | GTM", ["Growth / GTM", "SaaS"], "FR", 34000, 170000, 48000],
+  ["Joseph", "Rudd", "Content & Demand Gen", ["Marketing", "B2B"], "GB", 28000, 148000, 44000],
+  ["Emma", "Guetta", "AI · Media / Content", ["AI", "Marketing"], "FR", 7800, 135000, 48000],
+  ["Kevin", "Meyer", "RevOps | Automation", ["CRM", "Productivity"], "DE", 12000, 65000, 31000],
+  ["Raj", "Vaibhav", "Developer Advocate", ["Developer Tools", "AI"], "IN", 9400, 45000, 26000],
+  ["Anthony", "Quinchon", "Outbound systems", ["Outreach", "Sales"], "FR", 8600, 43000, 24000],
+  ["Amber", "Cheema", "B2B SaaS storytelling", ["SaaS", "Marketing"], "US", 6100, 32000, 21000],
+  ["Mejda", "Dihi", "Product marketing", ["Marketing", "SaaS"], "MA", 5200, 26000, 18000],
+  ["Sandhya", "Mishra", "Data & analytics", ["Data / Analytics", "AI"], "IN", 4800, 23000, 17000],
+  ["Robin", "Tempe", "Creator · Sales & AI", ["Sales", "AI"], "FR", 12000, 20000, 20000],
+  ["Dilem", "Kaya", "AI · HealthTech", ["HealthTech", "AI"], "TR", 3400, 8500, 14000],
+] as const;
+
+async function seedCreators(passwordHash: string) {
+  for (const [firstName, lastName, headline, industryLabels, country, followerCount, reach, priceCents] of CREATORS) {
+    const email = `demo-creator-${firstName}.${lastName}@naano.demo`.toLowerCase();
+    const slug = `${firstName}-${lastName}`.toLowerCase();
+
+    const industries = await prisma.industry.findMany({
+      where: { label: { in: [...industryLabels] } },
+      select: { id: true },
+    });
+
+    await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email,
+        firstName,
+        lastName,
+        role: "CREATOR",
+        passwordHash,
+        creator: {
+          create: {
+            cardSlug: slug,
+            headline,
+            country,
+            followerCount,
+            publicPostReach: reach,
+            publicPostCount: Math.round(reach / 9000),
+            publicEngagements: Math.round(reach / 60),
+            pricePerPostCents: priceCents,
+            onboardingCompleted: true,
+            linkedinUrl: `https://www.linkedin.com/in/${slug}`,
+            industries: { connect: industries.map((i) => ({ id: i.id })) },
+          },
+        },
+      },
+    });
+  }
+  console.log(`seeded ${CREATORS.length} demo creators`);
+}
+
 async function main() {
   const passwordHash = await bcrypt.hash("demo-password", 10);
 
@@ -145,6 +203,8 @@ async function main() {
 
     console.log(`seeded ${brand.name}`);
   }
+
+  await seedCreators(passwordHash);
 
   const campaigns = await prisma.campaign.count({ where: { openToApplications: true } });
   console.log(`open campaigns now available: ${campaigns}`);

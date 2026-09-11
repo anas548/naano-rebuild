@@ -27,6 +27,9 @@ Real behaviour, backed by the database.
 | **Marketplace listing flag** | Completing a card sets `onboardingCompleted`, the exact condition the brand marketplace will select on |
 | **Opportunities** | Lists open brand campaigns and applying creates a real `Collaboration` (status `APPLIED`), priced from the creator's net rate plus Naano's margin |
 | **Collaborations** | Tabbed table of the creator's deals with live counts; applications made in Opportunities appear here immediately |
+| **Analytics** | Reads the profile's real public-LinkedIn figures. Since import is paused these are genuinely zero/pending, which is what the reference shows |
+| **Earnings** | Totals, six-month chart and recent activity derived from **completed collaborations**; an Earning row, where present, decides the payout stage |
+| **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
 
 ## Stubbed on purpose
 
@@ -43,6 +46,8 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **Avatar menu items** | Integrations, Settings, Guided tour render but do nothing | Only sign-out is wired |
 | **"Add a bundle"** | Inert button on the price step | Bundles are not modelled |
 | **EN/FR switch, notifications bell** | Presentational | No i18n or notification system |
+| **Payout methods and withdrawal** | Bank transfer / Stripe options and the withdraw form render but are disabled | No payment processor; LinkedIn and banking are not connected in this clone |
+| **Community actions** | "Join the Slack community" and "Publish my card" are presentational | No Slack workspace or LinkedIn publishing integration |
 | **Affiliate 25% / 3 months** | Copy is shown on My card | Reward tracking is not implemented; "A creator" in the signup dropdown is an inert option with no referral logic behind it |
 | **Email verification** | Brand signup goes straight through | The 6-digit code screen exists in recon but is not built |
 | **1,000-follower gate** | Not enforced; every creator sees open campaigns | The reference gates Opportunities behind 1,000 followers, but LinkedIn import is paused so the count is always 0 and nobody could ever pass it. Dropped by decision rather than left as a dead end |
@@ -53,7 +58,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | --- | --- |
 | **Brand onboarding** | Website analysis, value prop, ICPs, AI matching step |
 | **Brand dashboard** | Overview, Creators, Campaigns, Collaborations, Results, Messages, Billing — currently a placeholder page |
-| **Creator tabs** | Analytics, Community, Earnings, Affiliate, Messages are navigable placeholders |
+| **Creator tabs** | Affiliate and Messages are navigable placeholders |
 | **Campaigns and bookings** | No way to create a campaign or invite a creator yet |
 | **Messaging** | `Conversation`/`Message` are modelled; no UI |
 | **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
@@ -93,3 +98,7 @@ Honest differences, not oversights.
 - The populated Opportunities list has **no reference screenshot** — only the
   locked state was captured — so the campaign card layout is an original design
   in the app's visual language.
+- `npm run db:demo` also seeds twelve demo creators, which is what populates the
+  Community leaderboard and will later populate the brand marketplace. Their
+  follower and reach figures are illustrative demo data, not imported from
+  LinkedIn.

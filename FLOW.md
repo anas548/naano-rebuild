@@ -72,9 +72,9 @@ and **the creator becomes listable in the brand marketplace**.
 | `/creator/card` | Built — Edit/Preview, Deal Link panel |
 | `/creator/opportunities` | Built — open campaigns, apply |
 | `/creator/collaborations` | Built — tabbed table of the creator's deals |
-| `/creator/analytics` | Placeholder |
-| `/creator/community` | Placeholder |
-| `/creator/earnings` | Placeholder |
+| `/creator/analytics` | Built — public LinkedIn figures, pending while import is paused |
+| `/creator/community` | Built — Slack, LinkedIn visibility, campaign leaderboard |
+| `/creator/earnings` | Built — totals and activity from completed collaborations |
 | `/creator/affiliate` | Placeholder |
 | `/creator/messages` | Placeholder |
 
@@ -100,8 +100,8 @@ tab.
 ```
 Brand accepts   → Collaboration ACTIVE; publish the post
     └─ post published → Post row, metrics tracked
-Earnings        AWAITING_RELEASE → AVAILABLE → withdraw → IN_TRANSIT → PAID
-                payout by bank transfer or Stripe
+Earnings        totals come from COMPLETED collaborations; withdrawal itself
+                (bank transfer or Stripe) is not wired
 ```
 
 ## Brand journey
