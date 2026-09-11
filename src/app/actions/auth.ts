@@ -20,6 +20,12 @@ const HOME_FOR: Record<UserRole, string> = {
   CREATOR: "/creator",
 };
 
+// A new creator goes straight into the card-building steps.
+const AFTER_SIGNUP: Record<UserRole, string> = {
+  BRAND: "/brand",
+  CREATOR: "/signup/creator/linkedin",
+};
+
 function readHeardAboutUs(value: FormDataEntryValue | null) {
   const key = String(value ?? "");
   return key in HeardAboutUs ? (key as HeardAboutUs) : null;
@@ -72,7 +78,7 @@ export async function signUpAction(
   });
 
   await createSession(user.id);
-  redirect(HOME_FOR[user.role]);
+  redirect(AFTER_SIGNUP[user.role]);
 }
 
 export async function signInAction(
