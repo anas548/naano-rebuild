@@ -175,8 +175,8 @@ back in mid-onboarding resumes rather than dropping onto a broken dashboard.
 | `/brand/creators` | Built — two tabs. **AI Matching** is the static cloud hero from the recon: a prompt box and 4 suggested prompts (built from the brand's real ICP titles), but submitting shows an honest "isn't wired up yet, try the Marketplace" notice — no fake results. **Creator Marketplace** is the functional path: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
 | `/brand/campaigns` | Built — list with All/Active/Draft/Completed tabs and live creators/published/budget counts; **Create a campaign** (`/brand/campaigns/new`) saves as draft or launches; the detail page edits the brief/budget/status/`openToApplications` and shows the real roster |
 | `/brand/collaborations` | Built — the same deal rows creators see, from the brand side, with All/Active/Invitations received/Invitations sent/To do/Completed tabs. **Accept**/**Decline** an application (wallet-gated), **Approve** a submitted post |
-| `/brand/results` | Not built — reach, qualified clicks, per-creator attribution, tracking pixel |
-| `/brand/messages` | Not built — reuses the same `Conversation` rows the creator inbox already writes |
+| `/brand/results` | Built — Analytics/Leads/Posts tabs. Analytics: est. reach, qualified clicks (30d), committed budget, a 6-month chart, post performance, and per-creator attribution — all real, all genuinely zero until posts exist. Posts: every real submitted `Post`, with a link. Leads: honest empty state (no pixel) |
+| `/brand/messages` | Built — the exact same `MessagesView` component and `Conversation` rows as the creator inbox; a message either side sends shows up in the other's inbox |
 | `/brand/billing` | Built — real balance, instant top-up (custom or +€2,500/+€10,000 presets), invoices table (All/Top-ups/Bookings) |
 
 **Inviting a creator** happens from the Marketplace card, not the campaign
@@ -202,16 +202,26 @@ no payment processor — but it writes a real `TOP_UP` `Invoice` and increments
 `Brand.balanceCents` in the same transaction, so a brand can unblock a stuck
 accept in one click without leaving the error message.
 
+**Messages** is the same `Conversation` rows and the same `MessagesView`
+component the creator inbox renders — the page just passes `viewerIsCreator:
+false` and fetches with the brand's own user id. `ensureConversations` (which
+opens a thread per live collaboration, both sides as participants) runs
+identically on both pages, so there's nothing brand-specific to wire beyond
+the route and the flag.
+
 The sidebar, top bar (with the real `Brand.balanceCents`) and all 7 routes
-exist and are guarded by role and onboarding state. Overview, Creators,
-Campaigns, Collaborations and Billing are built; Results and Messages remain.
+exist and are guarded by role and onboarding state. All seven are built.
 
 ### Where the two sides meet
 
-The join is already wired from the creator end. A creator with
-`onboardingCompleted = true` is exactly the set the brand marketplace will
-query. Completing a creator card today is what will make that creator appear
-brand-side tomorrow — no further creator-side work needed for that link.
+The join is wired from the creator end. A creator with
+`onboardingCompleted = true` is exactly the set the brand marketplace
+queries. The two dashboards now genuinely share state rather than mirroring
+it: the same `Collaboration` row is a brand's "invitation sent" and a
+creator's "invitation received", the same `Conversation` connects both users
+to one thread, and the same `Post` a creator submits is what the brand
+reviews on Collaborations and reads on Results. Nothing on either side is a
+private copy of the other's data.
 
 ## Money flow
 

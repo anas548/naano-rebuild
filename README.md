@@ -74,9 +74,8 @@ and without it the list is empty.
 
 ## Trying it out
 
-The creator side is fully built; on the brand side, onboarding and the app
-shell are built, the rest of the dashboard is not yet. The quickest path
-through it:
+Both sides are fully built and the marketplace loop runs end to end. The
+quickest path through it:
 
 1. Go to `/signup` and choose **I'm a creator**
 2. Sign up with email — OAuth buttons are intentionally inert
@@ -109,8 +108,10 @@ dashboard. From there:
 7. Back on the brand's Collaborations, **Approve** the post — the
    collaboration completes and the creator's **Earnings** total updates
    immediately
-
-Results and Messages (brand side) are not built yet.
+8. Open **Results** to see the real submitted post under the Posts tab, and
+   the committed budget/booking count on Analytics
+9. Open **Messages** on either side and send something — it shows up in the
+   other side's inbox, since it's the same conversation
 
 ### Demo brand login
 

@@ -29,5 +29,6 @@ export async function sendMessageAction(
   });
 
   revalidatePath("/creator/messages");
+  revalidatePath("/brand/messages");
   return null;
 }

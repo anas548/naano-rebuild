@@ -5,9 +5,9 @@ started. The aim is that nothing in this rebuild silently pretends to be more
 than it is.
 
 Work has run one feature at a time: build it, verify it in a real browser
-against `recon/`, fix what the comparison exposes, then move on. That is why the
-creator side is deep and the brand side is untouched, rather than both being
-half-done.
+against `recon/`, fix what the comparison exposes, then move on. Both sides
+are now fully built — the marketplace loop runs end to end, from a brand
+signing up through to a creator's earnings updating.
 
 ## Fully built
 
@@ -30,7 +30,7 @@ Real behaviour, backed by the database.
 | **Analytics** | Reads the profile's real public-LinkedIn figures. Since import is paused these are genuinely zero/pending, which is what the reference shows |
 | **Earnings** | Totals, six-month chart and recent activity derived from **completed collaborations**; an Earning row, where present, decides the payout stage |
 | **Community** | Slack and LinkedIn-visibility panels, plus a campaign leaderboard ranking real creator rows by reach |
-| **Messages** | Real threads per collaboration, with the brand and creator both as participants; messages persist and membership is enforced server-side |
+| **Messages** | Real threads per collaboration, shared between the creator and brand inboxes (one `MessagesView` component, two pages) — a message either side sends appears in the other's inbox immediately, membership is enforced server-side |
 | **Affiliate program** | Both Invite brands and Invite creators views; the creator invite link is genuinely gated on having published a card |
 | **Brand onboarding** | Website → value prop &amp; ICP → AI matching, all three steps persisting to `Brand`/`Icp` as they go, including a real starter `Campaign` seeded from the edited brief |
 | **Brand app shell** | Sidebar (7 tabs), top bar with the real wallet balance, resume-mid-onboarding and cross-role guards |
@@ -41,6 +41,7 @@ Real behaviour, backed by the database.
 | **Billing** | Real `Brand.balanceCents`, an instant top-up (custom amount or +€2,500/+€10,000 presets) that writes a `TOP_UP` invoice, and an invoices table (All/Top-ups/Bookings) |
 | **The wallet gate** | Accepting an invitation or application (whichever side does it) checks the brand's balance and, if sufficient, debits it and writes a `BOOKING` invoice in one transaction. Insufficient balance blocks the accept with a role-appropriate message — the brand's points at Billing, the creator's explains the brand needs to top up |
 | **Money moving for real** | Once a brand approves a submitted post, the collaboration completes and — because the Earnings page already treats a `COMPLETED` collaboration with no `Earning` row as fully available — the creator's Earnings total updates immediately. No `Earning` row is created for this path on purpose |
+| **Brand Results** | Analytics/Leads/Posts tabs. Analytics reads real numbers — est. reach, qualified clicks, committed budget (from `ACTIVE`/`COMPLETED` `Collaboration.amountCents`) and a 6-month chart, all genuinely zero until posts exist. Posts lists every real `Post` a creator has submitted, with a link to view it. Leads is an honest empty state, since there's no tracking pixel behind it |
 
 ## Stubbed on purpose
 
@@ -70,8 +71,8 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 
 | Area | Notes |
 | --- | --- |
-| **Results, Messages (brand side)** | Pages not built yet |
-| **Post metrics and attribution** | `Post` is modelled; no ingestion, no Results page, no tracking pixel |
+| **Post metric ingestion, tracking pixel** | `Post.impressions/reactions/comments/qualifiedClicks` are modelled and displayed on both Results and Earnings, but nothing ever writes a non-zero value into them — there's no LinkedIn API call and no pixel. Genuinely zero, not hidden |
+| **Withdrawal** | Bank transfer / Stripe payout is displayed but disabled — see the creator Earnings stub entry above |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
 | **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |
 | **"NAANO MCP / Connect" breadcrumb** | Shown at the top of every brand screenshot; out of scope by explicit decision, so not built |
@@ -97,6 +98,9 @@ Honest differences, not oversights.
 - **Professional info form** — "Complete now" expands an inline form. The
   reference only shows the choice screen, so the fields behind it are a
   judgment call.
+- **Results "Performance over time" chart** — bars, not the line-with-dots in
+  the reference, matching the chart style already used on creator Earnings.
+  The underlying data is real either way; this is a rendering choice.
 
 ## Data notes
 

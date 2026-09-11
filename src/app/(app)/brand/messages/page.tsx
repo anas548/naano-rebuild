@@ -2,9 +2,9 @@ import { requireUser } from "@/lib/session";
 import { ensureConversations, getThread, listConversations } from "@/lib/messaging";
 import { MessagesView } from "@/components/messaging/messages-view";
 
-export default async function CreatorMessagesPage({
+export default async function BrandMessagesPage({
   searchParams,
-}: PageProps<"/creator/messages">) {
+}: PageProps<"/brand/messages">) {
   const user = await requireUser();
   await ensureConversations(user.id);
 
@@ -16,11 +16,11 @@ export default async function CreatorMessagesPage({
   return (
     <MessagesView
       userId={user.id}
-      viewerIsCreator
+      viewerIsCreator={false}
       conversations={conversations}
       thread={thread}
       selectedId={selectedId}
-      emptySubtitle="No conversations yet - the thread opens with your first Booking."
+      emptySubtitle="No conversations yet, invite a creator or accept an application - the thread opens with the booking."
     />
   );
 }
