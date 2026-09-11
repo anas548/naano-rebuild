@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail } from "lucide-react";
 import { AuthLayout } from "@/components/auth/auth-layout";
-import { ProviderButton } from "@/components/auth/provider-button";
 import { MarketplaceCardPreview } from "@/components/auth/marketplace-card-preview";
-import { GoogleIcon, LinkedInIcon } from "@/components/landing/icons";
+import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export const metadata: Metadata = {
   title: "Join Naano as a creator — Naano",
 };
 
-export default function CreatorSignUpPage() {
+export default function CreatorEmailSignUpPage() {
   return (
     <AuthLayout
       panelTone="light"
       step="Step 1 of 4"
-      back={{ href: "/signup", label: "Back to sign-up options" }}
+      back={{ href: "/signup/creator", label: "Back to sign-up options" }}
       panel={
         <div>
           <div className="text-center">
@@ -43,20 +41,8 @@ export default function CreatorSignUpPage() {
         Get paid to create LinkedIn content for B2B brands you actually use.
       </p>
 
-      <div className="mt-7 space-y-3">
-        <ProviderButton
-          icon={<LinkedInIcon className="size-5" />}
-          label="Sign up with LinkedIn"
-        />
-        <ProviderButton
-          icon={<GoogleIcon className="size-5" />}
-          label="Sign up with Google"
-        />
-        <ProviderButton
-          icon={<Mail className="size-5 text-ink/70" />}
-          label="Sign up with email"
-          href="/signup/creator/email"
-        />
+      <div className="mt-7">
+        <SignUpForm role="CREATOR" emailLabel="Email" />
       </div>
 
       <p className="mt-7 text-center text-[0.875rem] text-ink/55">

@@ -46,7 +46,7 @@ export function FinalCta() {
             ))}
           </ul>
 
-          <Button render={<Link href="/signup" />}
+          <Button nativeButton={false} render={<Link href="/signup" />}
             className="group mt-6 w-full rounded-full bg-ink py-5 text-white hover:bg-ink/90">
               Book a campaign call
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />

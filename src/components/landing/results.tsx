@@ -90,7 +90,7 @@ export function Results() {
         </div>
 
         <div className="mt-12 flex flex-col items-center">
-          <Button render={<Link href="/signup" />} size="lg" className="group rounded-full bg-ink px-6 text-white hover:bg-ink/90">
+          <Button nativeButton={false} render={<Link href="/signup" />} size="lg" className="group rounded-full bg-ink px-6 text-white hover:bg-ink/90">
               Get started
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
             </Button>

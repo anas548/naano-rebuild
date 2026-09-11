@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail } from "lucide-react";
 import { AuthLayout } from "@/components/auth/auth-layout";
-import { ProviderButton } from "@/components/auth/provider-button";
-import { GoogleIcon, LinkedInIcon } from "@/components/landing/icons";
+import { SignUpForm } from "@/components/auth/sign-up-form";
 
 export const metadata: Metadata = {
   title: "Join Naano as a brand — Naano",
 };
 
-export default function BrandSignUpPage() {
+export default function BrandEmailSignUpPage() {
   return (
     <AuthLayout
-      back={{ href: "/signup", label: "Back to sign-up options" }}
+      back={{ href: "/signup/brand", label: "Back to sign-up options" }}
       panel={
         <div className="max-w-[370px]">
           <h2 className="font-display text-4xl leading-tight font-semibold tracking-[-0.02em] text-white xl:text-[2.75rem]">
@@ -39,20 +37,8 @@ export default function BrandSignUpPage() {
         business.
       </p>
 
-      <div className="mt-7 space-y-3">
-        <ProviderButton
-          icon={<LinkedInIcon className="size-5" />}
-          label="Sign up with LinkedIn"
-        />
-        <ProviderButton
-          icon={<GoogleIcon className="size-5" />}
-          label="Sign up with Google"
-        />
-        <ProviderButton
-          icon={<Mail className="size-5 text-ink/70" />}
-          label="Sign up with email"
-          href="/signup/brand/email"
-        />
+      <div className="mt-7">
+        <SignUpForm role="BRAND" emailLabel="Business email" />
       </div>
 
       <p className="mt-7 text-center text-[0.875rem] text-ink/55">

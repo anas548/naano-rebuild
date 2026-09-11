@@ -84,10 +84,10 @@ export function SiteHeader() {
             <Globe className="size-4 xl:size-[1.125rem]" />
             EN
           </button>
-          <Button render={<Link href="/signin" />}
+          <Button nativeButton={false} render={<Link href="/signin" />}
             variant="secondary"
             className="hidden h-11 rounded-full bg-white px-6 text-[0.9375rem] text-ink shadow-sm hover:bg-white/90 sm:inline-flex xl:h-12 xl:px-7 xl:text-base">Sign in</Button>
-          <Button render={<Link href="/signup" />}
+          <Button nativeButton={false} render={<Link href="/signup" />}
             className="h-11 rounded-full bg-ink px-6 text-[0.9375rem] text-white hover:bg-ink/90 xl:h-12 xl:px-7 xl:text-base">Sign up</Button>
           <button
             type="button"

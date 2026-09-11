@@ -49,7 +49,8 @@ model Brand {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  name             String
+  /// Unknown until the website analysis step of brand onboarding.
+  name             String?
   websiteUrl       String?
   logoUrl          String?
   valueProposition String?       @db.Text

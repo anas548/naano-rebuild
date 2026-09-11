@@ -28,7 +28,7 @@ export function Hero() {
           </p>
 
           <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 xl:mt-12 xl:gap-8">
-            <Button render={<Link href="/signup" />}
+            <Button nativeButton={false} render={<Link href="/signup" />}
               size="lg"
               className="group h-12 rounded-full bg-ink px-7 text-[0.9375rem] text-white hover:bg-ink/90 xl:h-14 xl:px-8 xl:text-[1.0625rem]">
                 Launch a campaign

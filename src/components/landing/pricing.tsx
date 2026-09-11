@@ -86,7 +86,7 @@ export function Pricing() {
 
               <div className="mt-7">
                 {plan.cta.solid ? (
-                  <Button render={<Link href={plan.cta.href} />}
+                  <Button nativeButton={false} render={<Link href={plan.cta.href} />}
                     className="group rounded-full bg-ink px-6 py-5 text-white hover:bg-ink/90">
                       {plan.cta.label}
                       <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
