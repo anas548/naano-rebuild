@@ -1,6 +1,7 @@
 import { Calendar, Share2 } from "lucide-react";
 import { NaanoLogo } from "@/components/naano-logo";
 import { LinkedInIcon } from "@/components/landing/icons";
+import { countryFlag } from "@/lib/countries";
 import { formatEuros } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ export type CreatorCardData = {
   estImpressions: number | null;
   pricePerPostCents: number | null;
   hasPostData: boolean;
+  countryCode?: string | null;
 };
 
 /** The creator's marketplace card. The signup preview renders the blue,
@@ -55,9 +57,18 @@ export function CreatorCard({
           wordmarkClassName="text-white"
           markClassName="h-[1.15rem] w-[1.5rem] xl:h-[1.15rem] xl:w-[1.5rem]"
         />
-        {showShare && (
-          <span className="absolute top-5 right-5 flex size-11 items-center justify-center rounded-xl bg-white/95 shadow-sm">
-            <Share2 className="size-5 text-ink/70" />
+        {(showShare || data.countryCode) && (
+          <span className="absolute top-5 right-5 flex items-center gap-2">
+            {data.countryCode && (
+              <span className="flex size-11 items-center justify-center rounded-xl bg-white/95 text-xl shadow-sm">
+                {countryFlag(data.countryCode)}
+              </span>
+            )}
+            {showShare && (
+              <span className="flex size-11 items-center justify-center rounded-xl bg-white/95 shadow-sm">
+                <Share2 className="size-5 text-ink/70" />
+              </span>
+            )}
           </span>
         )}
       </div>
