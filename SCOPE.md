@@ -62,6 +62,7 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | **Avatar menu items** | Integrations, Settings, Guided tour render but do nothing | Only sign-out is wired |
 | **"Add a bundle"** | Inert button on the price step | Bundles are not modelled |
 | **EN/FR switch, notifications bell** | Presentational | No i18n or notification system |
+| **Global "What would you like to do?" bar** | Mounted once in the root layout (`src/components/global-assistant-bar.tsx`), so it's on every page — landing, auth, both dashboards — matching every reference screenshot. Typing works; submitting does nothing | Explicit decision: presentational shell only. The user has specific functionality planned for it and will describe it before it's wired up |
 | **Bank transfer payout** | The option renders but stays disabled ("No account holder on file") | No bank-detail capture form is built; Stripe is the one functional payout method — see below |
 | **Community actions** | "Join the Slack community" and "Publish my card" are presentational | No Slack workspace or LinkedIn publishing integration |
 | **Affiliate 25% / 3 months** | Both affiliate views render and links copy | Referral attribution and reward tracking are not implemented, so the stats read zero. Links point at the real signup routes with a `ref` tag rather than 404ing |
@@ -76,7 +77,6 @@ Present in the UI and convincing, but not real. Each was an explicit decision.
 | --- | --- |
 | **Post metric ingestion, tracking pixel** | `Post.impressions/reactions/comments/qualifiedClicks` are modelled and displayed on both Results and Earnings, but nothing ever writes a non-zero value into them — there's no LinkedIn API call and no pixel. Genuinely zero, not hidden |
 | **Sidebar collapse** | The live site collapses the sidebar to icons; ours is fixed-width |
-| **Assistant pill** | Every reference screenshot has a "What would you like to do?" pill; not built, and not asked for |
 | **"NAANO MCP / Connect" breadcrumb** | Shown at the top of every brand screenshot; out of scope by explicit decision, so not built |
 | **"Get started" checklist pill** | The `1/3 Discover the Market...` progress pill in the brand top bar; decorative, not built |
 
