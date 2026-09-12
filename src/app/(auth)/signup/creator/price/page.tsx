@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { OnboardingPanel } from "@/components/auth/onboarding-panel";
-import { LinkedInPausedNotice } from "@/components/auth/linkedin-paused-notice";
 import { PriceStepForm } from "@/components/auth/price-step-form";
 import { getOnboardingContext } from "@/lib/onboarding";
 
@@ -21,9 +20,6 @@ export default async function PriceStepPage() {
       <h1 className="font-display text-[1.75rem] font-semibold tracking-[-0.02em] text-ink">
         Complete your creator card
       </h1>
-      <div className="mt-5">
-        <LinkedInPausedNotice />
-      </div>
       <Link
         href="/signup/creator/profile"
         className="mt-5 inline-flex items-center gap-2 text-[0.875rem] text-ink/70 transition-colors hover:text-ink"

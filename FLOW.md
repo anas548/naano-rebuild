@@ -60,9 +60,10 @@ the URL fetches the public profile's `og:title`/`og:image` meta tags (the
 same ones a browser or a chat app reads to unfurl a pasted link — no login,
 no LinkedIn API) and, when that succeeds, overwrites the typed name and sets
 a real avatar photo, used everywhere a creator's picture appears from then
-on. Steps 3 and 4 still carry the "import is temporarily paused, continue
-with a Basic card" notice, because the *data* import — posts, followers,
-engagement — genuinely never runs; that stays at zero. Any scrape failure
+on. The "import is temporarily paused" notice that used to sit on steps 3 and
+4 has been removed by request — it read as contradicting the real photo
+shown right next to it — but the *data* import (posts, followers,
+engagement) genuinely still never runs; that stays at zero. Any scrape failure
 (private profile, timeout, blocked request, markup change) is silent: the
 typed name and an initials avatar are always there as a fallback, so this
 never blocks onboarding.
