@@ -27,8 +27,9 @@ withdraw earnings, Naano takes a margin in between.
 - A **PostgreSQL** database. This project was developed against
   [Neon](https://neon.tech), which is where the pooled/direct URL split comes
   from.
-- An **OpenAI API key** with available credit, only if you want to try AI
-  Matching (`/brand/creators`) — everything else runs without one.
+- A **DeepSeek API key** with available credit, only if you want to try AI
+  Matching (`/brand/creators`) or the assistant bar — everything else runs
+  without one.
 
 ## Setup
 
@@ -49,16 +50,16 @@ DATABASE_URL_POOLED="postgresql://user:password@host-pooler/db?sslmode=require"
 Both are required. If you are not on Neon and have only one connection string,
 set both variables to the same value.
 
-Optionally, add an OpenAI key for AI Matching:
+Optionally, add a DeepSeek key for AI Matching and the assistant bar:
 
 ```bash
-OPENAI_API_KEY="sk-..."
-# OPENAI_MODEL="gpt-4o-mini"   # optional override, this is the default
+DEEP_SEEK_API_KEY="sk-..."
+# DEEP_SEEK_MODEL="deepseek-flash"   # optional override, this is the default
 ```
 
-Without it, `/brand/creators` still shows the AI Matching tab, but a search
-returns a clear "isn't configured yet" error instead of results — everything
-else in the app is unaffected.
+Without it, the AI Matching tab and the "What would you like to do?" bar
+still render, but a search or question returns a clear "isn't configured yet"
+error instead of an answer — everything else in the app is unaffected.
 
 Then set up the database and start the app:
 
@@ -104,7 +105,11 @@ quickest path through it:
 4. Land on the creator dashboard, and open **My card** to edit and preview your
    marketplace card
 5. Your public card is live at `/c/<your-card-slug>`
-6. Run `npm run db:demo`, then open **Opportunities** and apply to a campaign
+6. Run `npm run db:demo`, then open **Opportunities**. Ask the assistant bar
+   "which opportunity has the best chance for me?" — it ranks the real open
+   campaigns against your real profile and highlights the best fit(s)
+   (needs `DEEP_SEEK_API_KEY` — see Requirements), or just apply to a campaign
+   directly
 
 To see the brand side, go to `/signup` and choose **I'm a brand**, sign up with
 email, then try the 3-step onboarding: enter any website (try `apple.com`,
@@ -117,8 +122,8 @@ dashboard. From there:
    create a second one to see draft vs. launch
 2. Open **Creators** — on the default **AI Matching** tab, click a suggested
    prompt (or type your own) and it returns real, reasoned picks from real
-   creators (needs `OPENAI_API_KEY` with credit — see Requirements); switch
-   to **Creator Marketplace**, filter by industry/country/price, and **Add**
+   creators (needs `DEEP_SEEK_API_KEY` — see Requirements); switch to
+   **Creator Marketplace**, filter by industry/country/price, and **Add**
    a creator to a campaign directly
 3. Open **Collaborations** and try **Accept** — it'll be blocked, because a
    fresh brand's wallet is empty
@@ -138,6 +143,9 @@ dashboard. From there:
 10. As the creator, open **Earnings** and **Withdraw** part of the balance —
     it's an instant simulated Stripe payout, shows up in Recent activity as
     Paid, and "Withdraw all" always fills the exact remainder
+11. On any other page, ask the assistant bar a general question — "how does
+    Naano work?", "what happens when I run out of wallet balance?" — for the
+    basic NaanoBot chatbot (same `DEEP_SEEK_API_KEY`)
 
 ### Demo brand login
 

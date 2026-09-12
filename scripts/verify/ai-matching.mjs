@@ -1,9 +1,9 @@
-// Verifies AI Matching end to end: a real OpenAI call, grounded in the real
+// Verifies AI Matching end to end: a real DeepSeek call, grounded in the real
 // Marketplace creator pool and the brand's real ICPs/campaign brief, returns
 // a shortlist rendered as real Marketplace cards with a working Add button —
 // not fabricated data, and no console errors along the way.
 //
-// Requires a running dev server (npm run dev), OPENAI_API_KEY, and
+// Requires a running dev server (npm run dev), DEEP_SEEK_API_KEY, and
 // DATABASE_URL_POOLED in the environment. Signs in as the seeded demo
 // lemlist brand (npm run db:demo) rather than creating a throwaway account,
 // since it needs a real pool of creators and an ICP/campaign brief to match
@@ -78,7 +78,7 @@ async function run() {
   );
   console.log("PASS pending state shows while the model call is in flight:", pendingShown);
 
-  // Real network call to OpenAI - give it real time.
+  // Real network call to DeepSeek - give it real time.
   const resolved = await waitUntil(
     async () =>
       (await page.locator("text=/match(es)? for/").count()) > 0 ||

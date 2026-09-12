@@ -96,6 +96,16 @@ creator's net rate plus Naano's margin — the same row the brand will later
 accept. The reference gates this tab behind 1,000 followers; that gate is
 dropped here, because LinkedIn import is paused and the count never leaves zero.
 
+Asking the global assistant bar a question on this page is a real, purpose-built
+feature: it ranks the real open campaigns against the creator's real profile
+(industries, headline, price) and answers in the bar's panel — deliberately
+never stating a fabricated acceptance percentage, since there's no historical
+acceptance data anywhere in this app, only a plain-language best-fit judgment.
+The matching campaign card(s) also get a violet "Best fit" border, badge, and
+the model's one-sentence reason, via `AssistantContext` bridging the
+globally-mounted bar and the page (siblings under the root layout, not
+parent/child) — see `src/components/assistant/`.
+
 **Messages** opens a thread per live collaboration with both the creator and the
 brand as participants, so the brand reads the same conversation from its own
 dashboard. A NaanoBot thread exists from signup. Declined deals get no thread,
@@ -205,7 +215,7 @@ back in mid-onboarding resumes rather than dropping onto a broken dashboard.
 | Route | State |
 | --- | --- |
 | `/brand` | Built — hello banner, 4 real stat cards, and a To do list of applications to review and posts to approve |
-| `/brand/creators` | Built — two tabs, both functional now. **AI Matching**: the brand's ICPs/value prop/campaign brief plus the real Marketplace pool go to OpenAI (`gpt-4o-mini`, structured output), which returns up to 4 grounded picks with a one-sentence reason each — rendered as real Marketplace cards, Add included. **Creator Marketplace**: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
+| `/brand/creators` | Built — two tabs, both functional now. **AI Matching**: the brand's ICPs/value prop/campaign brief plus the real Marketplace pool go to DeepSeek (`deepseek-flash`, JSON mode), which returns up to 4 grounded picks with a one-sentence reason each — rendered as real Marketplace cards, Add included. **Creator Marketplace**: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
 | `/brand/campaigns` | Built — list with All/Active/Draft/Completed tabs and live creators/published/budget counts; **Create a campaign** (`/brand/campaigns/new`) saves as draft or launches; the detail page edits the brief/budget/status/`openToApplications` and shows the real roster |
 | `/brand/collaborations` | Built — the same deal rows creators see, from the brand side, with All/Active/Invitations received/Invitations sent/To do/Completed tabs. **Accept**/**Decline** an application (wallet-gated), **Approve** a submitted post |
 | `/brand/results` | Built — Analytics/Leads/Posts tabs. Analytics: est. reach, qualified clicks (30d), committed budget, a 6-month chart, post performance, and per-creator attribution — all real, all genuinely zero until posts exist. Posts: every real submitted `Post`, with a link. Leads: honest empty state (no pixel) |
@@ -257,6 +267,18 @@ creator's "invitation received", the same `Conversation` connects both users
 to one thread, and the same `Post` a creator submits is what the brand
 reviews on Collaborations and reads on Results. Nothing on either side is a
 private copy of the other's data.
+
+## The assistant bar
+
+The floating "What would you like to do?" bar is mounted once in the root
+layout, so it's identical on every page on both sides — real now, not a
+shell. Single-turn only: nothing is persisted, every question is answered
+fresh with one DeepSeek call (`src/lib/llm.ts`). On the creator's
+Opportunities page it's the purpose-built ranking feature described above;
+everywhere else, for both a creator and a brand, it's NaanoBot — a basic
+FAQ chatbot that knows what Naano is and what's real vs demo in this build,
+personalized only by the viewer's name and role, honest when asked for an
+account number it doesn't have on hand rather than guessing.
 
 ## Money flow
 
