@@ -78,7 +78,7 @@ and without it the list is empty.
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Start the dev server |
-| `npm run build` | Production build (also regenerates typed routes) |
+| `npm run build` | Regenerates the Prisma client, then a production build (also regenerates typed routes) |
 | `npm run lint` | ESLint |
 | `npm run db:migrate` | Create and apply a migration |
 | `npm run db:generate` | Regenerate the Prisma client |
@@ -162,6 +162,22 @@ see a populated brand account:
 The same seed creates 12 demo creators, all on `demo-password`, e.g.
 `demo-creator-eric.djavid@naano.demo` (see `prisma/demo.ts` for the full list)
 — useful for step 6 above without a second signup.
+
+## Deployment
+
+Deploys as a standard Next.js app (tested on Vercel). The Prisma client is
+generated into a custom, gitignored location (`src/generated/prisma`), so both
+`postinstall` and `build` run `prisma generate` before anything else needs it —
+no extra build-command configuration required. Set these environment
+variables on the host:
+
+- `DATABASE_URL` and `DATABASE_URL_POOLED` — required, see Setup above
+- `DEEP_SEEK_API_KEY` (and optionally `DEEP_SEEK_MODEL`) — optional, enables AI
+  Matching and the assistant bar
+
+Migrations and seeding (`npm run db:migrate`, `npm run db:seed`, `npm run
+db:demo`) are not part of the build step — run them against the target
+database yourself before or after the first deploy.
 
 ## A note on `.agent-logs/`
 
