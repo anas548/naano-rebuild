@@ -24,6 +24,7 @@ export async function getOnboardingContext() {
     pricePerPostCents: profile.pricePerPostCents || null,
     hasPostData: true,
     countryCode: profile.country,
+    avatarUrl: profile.avatarUrl,
   };
 
   return { user, profile, card };

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Calendar, Share2 } from "lucide-react";
 import { NaanoLogo } from "@/components/naano-logo";
 import { LinkedInIcon } from "@/components/landing/icons";
@@ -14,6 +15,9 @@ export type CreatorCardData = {
   pricePerPostCents: number | null;
   hasPostData: boolean;
   countryCode?: string | null;
+  /** From LinkedIn's public og:image, when the scrape succeeded — see
+   *  src/lib/linkedin-scrape.ts. Falls back to an initials circle. */
+  avatarUrl?: string | null;
 };
 
 /** The creator's marketplace card. The signup preview renders the blue,
@@ -76,18 +80,28 @@ export function CreatorCard({
       <div className="relative -mt-[2.65rem] px-7 text-center">
         <div
           className={cn(
-            "mx-auto flex size-[5.3rem] items-center justify-center rounded-full ring-[5px] ring-white",
+            "mx-auto flex size-[5.3rem] items-center justify-center overflow-hidden rounded-full ring-[5px] ring-white",
             hasIdentity ? "bg-[#dd005c]" : "bg-neutral-100",
           )}
         >
-          <span
-            className={cn(
-              "font-display text-[2rem] font-semibold",
-              hasIdentity ? "text-white" : "text-ink/25",
-            )}
-          >
-            {name.trim().charAt(0).toUpperCase() || "Y"}
-          </span>
+          {data.avatarUrl ? (
+            <Image
+              src={data.avatarUrl}
+              alt={name}
+              width={85}
+              height={85}
+              className="size-full object-cover"
+            />
+          ) : (
+            <span
+              className={cn(
+                "font-display text-[2rem] font-semibold",
+                hasIdentity ? "text-white" : "text-ink/25",
+              )}
+            >
+              {name.trim().charAt(0).toUpperCase() || "Y"}
+            </span>
+          )}
         </div>
 
         <h3 className="mt-4 font-display text-[1.625rem] font-semibold tracking-tight text-ink">

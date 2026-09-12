@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
+import { scrapeLinkedInProfile, splitName } from "@/lib/linkedin-scrape";
 
 export type StepState = { error?: string } | null;
 
@@ -23,11 +24,27 @@ export async function saveLinkedInAction(
     return { error: "Enter a public profile URL like linkedin.com/in/you." };
   }
 
-  // The import itself stays paused by agreement, so we keep the URL and move on.
-  await prisma.creatorProfile.update({
-    where: { userId },
-    data: { linkedinUrl, linkedinImportStatus: "PAUSED" },
-  });
+  // Best-effort: pick up a real name and photo from the profile's public
+  // link-preview meta tags. The full import itself stays paused by
+  // agreement — this never fetches posts, followers, or anything requiring
+  // a session — and any failure here is silent, so onboarding never blocks
+  // on it (see scrapeLinkedInProfile's own comment).
+  const scraped = await scrapeLinkedInProfile(linkedinUrl);
+  const nameUpdate = scraped.name ? splitName(scraped.name) : null;
+
+  await prisma.$transaction([
+    prisma.creatorProfile.update({
+      where: { userId },
+      data: {
+        linkedinUrl,
+        linkedinImportStatus: "PAUSED",
+        ...(scraped.avatarUrl ? { avatarUrl: scraped.avatarUrl } : {}),
+      },
+    }),
+    ...(nameUpdate
+      ? [prisma.user.update({ where: { id: userId }, data: nameUpdate })]
+      : []),
+  ]);
 
   redirect("/signup/creator/profile");
 }

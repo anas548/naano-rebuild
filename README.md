@@ -84,8 +84,10 @@ quickest path through it:
 
 1. Go to `/signup` and choose **I'm a creator**
 2. Sign up with email — OAuth buttons are intentionally inert
-3. Walk the four onboarding steps: LinkedIn URL, country and industries, price
-   per post, then the optional professional information step
+3. Walk the four onboarding steps: LinkedIn URL (try a real public profile,
+   e.g. `linkedin.com/in/williamhgates` — the name and photo get picked up
+   for real), country and industries, price per post, then the optional
+   professional information step
 4. Land on the creator dashboard, and open **My card** to edit and preview your
    marketplace card
 5. Your public card is live at `/c/<your-card-slug>`

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Image from "next/image";
 import { Check } from "lucide-react";
 import { inviteCreatorAction } from "@/app/actions/marketplace";
 import { countryFlag } from "@/lib/countries";
@@ -13,6 +14,7 @@ export type MarketplaceCreator = {
   industries: string[];
   countryCode: string | null;
   brandPaysCents: number;
+  avatarUrl?: string | null;
 };
 
 export function MarketplaceCreatorCard({
@@ -42,10 +44,20 @@ export function MarketplaceCreatorCard({
       </div>
 
       <div className="relative -mt-8 px-5">
-        <div className="flex size-14 items-center justify-center rounded-full bg-[#dd005c] ring-4 ring-white">
-          <span className="font-display text-[1.25rem] font-semibold text-white">
-            {creator.name.charAt(0).toUpperCase()}
-          </span>
+        <div className="flex size-14 items-center justify-center overflow-hidden rounded-full bg-[#dd005c] ring-4 ring-white">
+          {creator.avatarUrl ? (
+            <Image
+              src={creator.avatarUrl}
+              alt={creator.name}
+              width={56}
+              height={56}
+              className="size-full object-cover"
+            />
+          ) : (
+            <span className="font-display text-[1.25rem] font-semibold text-white">
+              {creator.name.charAt(0).toUpperCase()}
+            </span>
+          )}
         </div>
       </div>
 

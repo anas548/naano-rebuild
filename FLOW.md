@@ -55,10 +55,17 @@ Each step writes to `CreatorProfile` as it goes, so the card preview in the
 right-hand panel fills in live: the country flag appears after step 3, the
 industries and price after step 4.
 
-**LinkedIn import is hardcoded as paused.** The URL is validated and stored, but
-nothing is fetched; steps 3 and 4 carry the "import is temporarily paused,
-continue with a Basic card" notice, exactly as the reference does. Because the
-import never runs, follower count and post metrics stay at zero.
+**LinkedIn import is hardcoded as paused** — but identity is real. Submitting
+the URL fetches the public profile's `og:title`/`og:image` meta tags (the
+same ones a browser or a chat app reads to unfurl a pasted link — no login,
+no LinkedIn API) and, when that succeeds, overwrites the typed name and sets
+a real avatar photo, used everywhere a creator's picture appears from then
+on. Steps 3 and 4 still carry the "import is temporarily paused, continue
+with a Basic card" notice, because the *data* import — posts, followers,
+engagement — genuinely never runs; that stays at zero. Any scrape failure
+(private profile, timeout, blocked request, markup change) is silent: the
+typed name and an initials avatar are always there as a fallback, so this
+never blocks onboarding.
 
 Setting a price completes onboarding. That flips `onboardingCompleted`, which
 does two things: the dashboard launch guide moves to "1 of 1 steps complete",

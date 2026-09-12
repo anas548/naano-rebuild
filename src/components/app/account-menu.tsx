@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { LayoutGrid, Link2, LogOut, Settings } from "lucide-react";
 import { signOutAction } from "@/app/actions/auth";
 
@@ -13,7 +14,13 @@ const ITEMS = [
 
 /** The reference shows only an avatar in the top bar, so sign-out lives in a
  *  menu behind it rather than as its own button. */
-export function AccountMenu({ initial }: { initial: string }) {
+export function AccountMenu({
+  initial,
+  avatarUrl,
+}: {
+  initial: string;
+  avatarUrl?: string | null;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -43,8 +50,12 @@ export function AccountMenu({ initial }: { initial: string }) {
         aria-label="Account menu"
         className="relative block rounded-full"
       >
-        <span className="flex size-9 items-center justify-center rounded-full bg-[#dd005c] font-display text-[0.9375rem] font-semibold text-white">
-          {initial}
+        <span className="flex size-9 items-center justify-center overflow-hidden rounded-full bg-[#dd005c] font-display text-[0.9375rem] font-semibold text-white">
+          {avatarUrl ? (
+            <Image src={avatarUrl} alt="" width={36} height={36} className="size-full object-cover" />
+          ) : (
+            initial
+          )}
         </span>
         <span className="absolute right-0 bottom-0 size-2.5 rounded-full bg-[#00b14e] ring-2 ring-white" />
       </button>

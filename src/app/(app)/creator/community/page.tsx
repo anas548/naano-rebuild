@@ -129,6 +129,7 @@ export default async function CreatorCommunityPage() {
                 pricePerPostCents: profile?.pricePerPostCents || null,
                 hasPostData: (profile?.publicPostCount ?? 0) > 0,
                 countryCode: profile?.country,
+                avatarUrl: profile?.avatarUrl,
               }}
             />
           </div>

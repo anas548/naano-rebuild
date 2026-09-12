@@ -17,12 +17,13 @@ export default async function CreatorLayout({
   // Messages yet.
   await ensureConversations(user.id);
 
-  const [earnings, unreadMessages] = await Promise.all([
+  const [earnings, unreadMessages, profile] = await Promise.all([
     prisma.earning.aggregate({
       where: { collaboration: { creator: { userId: user.id } }, status: "AVAILABLE" },
       _sum: { netCents: true },
     }),
     countUnreadConversations(user.id),
+    prisma.creatorProfile.findUnique({ where: { userId: user.id }, select: { avatarUrl: true } }),
   ]);
 
   return (
@@ -32,6 +33,7 @@ export default async function CreatorLayout({
         <AppTopbar
           balanceCents={earnings._sum.netCents ?? 0}
           name={`${user.firstName} ${user.lastName}`}
+          avatarUrl={profile?.avatarUrl}
         />
         <main className="flex-1 px-6 py-8 sm:px-8">{children}</main>
       </div>

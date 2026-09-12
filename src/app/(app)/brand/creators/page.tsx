@@ -236,6 +236,7 @@ async function MarketplaceView({
                     industries: creator.industries.map((i) => i.label),
                     countryCode: creator.country,
                     brandPaysCents: brandPaysCents(creator.pricePerPostCents),
+                    avatarUrl: creator.avatarUrl,
                   }}
                   campaigns={availableCampaigns}
                   alreadyLinked={activeCampaigns.length > 0 && availableCampaigns.length === 0}

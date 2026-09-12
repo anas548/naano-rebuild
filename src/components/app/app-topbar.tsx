@@ -7,9 +7,11 @@ import { AccountMenu } from "@/components/app/account-menu";
 export function AppTopbar({
   balanceCents,
   name,
+  avatarUrl,
 }: {
   balanceCents: number;
   name: string;
+  avatarUrl?: string | null;
 }) {
   return (
     <header className="flex items-center justify-end gap-3 border-b border-[#e6e8ef] bg-white px-6 py-3.5 sm:px-8">
@@ -31,7 +33,7 @@ export function AppTopbar({
         <Bell className="size-[1.15rem]" />
       </button>
 
-      <AccountMenu initial={name.charAt(0).toUpperCase()} />
+      <AccountMenu initial={name.charAt(0).toUpperCase()} avatarUrl={avatarUrl} />
     </header>
   );
 }

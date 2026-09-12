@@ -28,6 +28,7 @@ export default async function PublicCardPage({ params }: PageProps<"/c/[slug]">)
           pricePerPostCents: profile.pricePerPostCents || null,
           hasPostData: profile.publicPostCount > 0,
           countryCode: profile.country,
+          avatarUrl: profile.avatarUrl,
         }}
       />
     </main>

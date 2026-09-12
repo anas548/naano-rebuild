@@ -129,6 +129,7 @@ export default async function CreatorOverviewPage() {
                 estImpressions: null,
                 pricePerPostCents: profile?.pricePerPostCents || null,
                 hasPostData: (profile?.publicPostCount ?? 0) > 0,
+                avatarUrl: profile?.avatarUrl,
               }}
             />
           </div>

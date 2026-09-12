@@ -39,6 +39,7 @@ export default async function CreatorCardPage() {
             pricePerPostCents: profile.pricePerPostCents || null,
             hasPostData: profile.publicPostCount > 0,
             countryCode: profile.country,
+            avatarUrl: profile.avatarUrl,
           }}
         />
       </div>
