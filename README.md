@@ -27,6 +27,8 @@ withdraw earnings, Naano takes a margin in between.
 - A **PostgreSQL** database. This project was developed against
   [Neon](https://neon.tech), which is where the pooled/direct URL split comes
   from.
+- An **OpenAI API key** with available credit, only if you want to try AI
+  Matching (`/brand/creators`) — everything else runs without one.
 
 ## Setup
 
@@ -46,6 +48,17 @@ DATABASE_URL_POOLED="postgresql://user:password@host-pooler/db?sslmode=require"
 
 Both are required. If you are not on Neon and have only one connection string,
 set both variables to the same value.
+
+Optionally, add an OpenAI key for AI Matching:
+
+```bash
+OPENAI_API_KEY="sk-..."
+# OPENAI_MODEL="gpt-4o-mini"   # optional override, this is the default
+```
+
+Without it, `/brand/creators` still shows the AI Matching tab, but a search
+returns a clear "isn't configured yet" error instead of results — everything
+else in the app is unaffected.
 
 Then set up the database and start the app:
 
@@ -102,8 +115,11 @@ dashboard. From there:
 
 1. Open **Campaigns** — your onboarding brief is already a live campaign — and
    create a second one to see draft vs. launch
-2. Open **Creators**, switch to the **Creator Marketplace** tab, filter by
-   industry/country/price, and **Add** a creator to a campaign
+2. Open **Creators** — on the default **AI Matching** tab, click a suggested
+   prompt (or type your own) and it returns real, reasoned picks from real
+   creators (needs `OPENAI_API_KEY` with credit — see Requirements); switch
+   to **Creator Marketplace**, filter by industry/country/price, and **Add**
+   a creator to a campaign directly
 3. Open **Collaborations** and try **Accept** — it'll be blocked, because a
    fresh brand's wallet is empty
 4. Open **Billing** and click **+ €10,000** — instant, no real payment

@@ -5,7 +5,7 @@ import { requireUser } from "@/lib/session";
 import { brandPaysCents } from "@/lib/pricing";
 import { countryName } from "@/lib/countries";
 import { cn } from "@/lib/utils";
-import { AiMatchingStatic } from "@/components/brand/ai-matching-static";
+import { AiMatchingPanel } from "@/components/brand/ai-matching-panel";
 import { MarketplaceCreatorCard } from "@/components/brand/marketplace-creator-card";
 
 function toArray(value: string | string[] | undefined): string[] {
@@ -73,7 +73,7 @@ function AiMatchingView({ brandName, icpTitles }: { brandName: string; icpTitles
     `Build a balanced creator shortlist for ${brandName}`,
   ];
 
-  return <AiMatchingStatic brandName={brandName} suggestions={suggestions} />;
+  return <AiMatchingPanel brandName={brandName} suggestions={suggestions} />;
 }
 
 async function MarketplaceView({

@@ -205,7 +205,7 @@ back in mid-onboarding resumes rather than dropping onto a broken dashboard.
 | Route | State |
 | --- | --- |
 | `/brand` | Built — hello banner, 4 real stat cards, and a To do list of applications to review and posts to approve |
-| `/brand/creators` | Built — two tabs. **AI Matching** is the static cloud hero from the recon: a prompt box and 4 suggested prompts (built from the brand's real ICP titles), but submitting shows an honest "isn't wired up yet, try the Marketplace" notice — no fake results. **Creator Marketplace** is the functional path: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
+| `/brand/creators` | Built — two tabs, both functional now. **AI Matching**: the brand's ICPs/value prop/campaign brief plus the real Marketplace pool go to OpenAI (`gpt-4o-mini`, structured output), which returns up to 4 grounded picks with a one-sentence reason each — rendered as real Marketplace cards, Add included. **Creator Marketplace**: real `CreatorProfile` rows (`onboardingCompleted: true`), filterable by industry/country/max price, no ICP-match badge by decision |
 | `/brand/campaigns` | Built — list with All/Active/Draft/Completed tabs and live creators/published/budget counts; **Create a campaign** (`/brand/campaigns/new`) saves as draft or launches; the detail page edits the brief/budget/status/`openToApplications` and shows the real roster |
 | `/brand/collaborations` | Built — the same deal rows creators see, from the brand side, with All/Active/Invitations received/Invitations sent/To do/Completed tabs. **Accept**/**Decline** an application (wallet-gated), **Approve** a submitted post |
 | `/brand/results` | Built — Analytics/Leads/Posts tabs. Analytics: est. reach, qualified clicks (30d), committed budget, a 6-month chart, post performance, and per-creator attribution — all real, all genuinely zero until posts exist. Posts: every real submitted `Post`, with a link. Leads: honest empty state (no pixel) |
@@ -217,7 +217,9 @@ page: pick which of the brand's active campaigns to add them to (a `<select>`
 if there's more than one), and it creates a real `Collaboration` at `INVITED`,
 priced at the creator's net rate plus Naano's margin — the same row the
 creator sees under *Needs action* on their own Collaborations tab. Inviting
-doesn't touch the wallet; accepting does — see the wallet gate above.
+doesn't touch the wallet; accepting does — see the wallet gate above. An AI
+Matching result card is the same component with the same Add button, so a
+match found via a prompt invites exactly the same way.
 
 **Accepting an application** on Collaborations runs the identical transaction
 the creator's Accept button runs (same helper, same gate): if the brand's

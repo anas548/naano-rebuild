@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import Image from "next/image";
-import { Check } from "lucide-react";
+import { Check, Sparkles } from "lucide-react";
 import { inviteCreatorAction } from "@/app/actions/marketplace";
 import { countryFlag } from "@/lib/countries";
 import { formatEuros } from "@/lib/pricing";
@@ -21,12 +21,16 @@ export function MarketplaceCreatorCard({
   creator,
   campaigns,
   alreadyLinked,
+  reason,
 }: {
   creator: MarketplaceCreator;
   campaigns: { id: string; name: string }[];
   /** True if this creator already has a collaboration on every one of the
    *  brand's active campaigns — nothing left to invite them to. */
   alreadyLinked: boolean;
+  /** AI Matching only: the model's one-sentence reason this creator was
+   *  picked, grounded in the same data shown on the card. */
+  reason?: string;
 }) {
   const [state, formAction, pending] = useActionState(inviteCreatorAction, null);
 
@@ -71,10 +75,17 @@ export function MarketplaceCreatorCard({
           </p>
         )}
         {creator.headline && (
-          <p className="mt-2 line-clamp-2 flex-1 text-[0.8125rem] leading-relaxed text-ink/55">
+          <p className="mt-2 line-clamp-2 text-[0.8125rem] leading-relaxed text-ink/55">
             {creator.headline}
           </p>
         )}
+        {reason && (
+          <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-[#f6f3ff] px-2.5 py-2 text-[0.75rem] leading-relaxed text-naano-violet">
+            <Sparkles className="mt-0.5 size-3 shrink-0" />
+            {reason}
+          </p>
+        )}
+        <div className="flex-1" />
 
         <div className="mt-4 flex items-end justify-between gap-3 border-t border-neutral-100 pt-4">
           <div>

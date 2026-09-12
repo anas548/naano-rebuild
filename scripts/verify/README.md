@@ -10,7 +10,10 @@ Each script is self-contained: it creates its own throwaway accounts
 (`*-<script>-<timestamp>@example.com`), runs the flow, asserts on what the
 page actually shows, and deletes what it created in a `finally` block —
 including on failure. Safe to re-run any time; never touches demo (`@naano.demo`)
-or real user accounts.
+or real user accounts. The one exception is `ai-matching.mjs`, which signs in
+as the seeded demo lemlist brand (it needs a real ICP/campaign brief and a
+real creator pool to match against) and deletes only the one `Collaboration`
+its own Add click creates — see its own header comment.
 
 ## Running one
 
@@ -32,6 +35,7 @@ server isn't on `localhost:3000`.
 | `withdraw.mjs` | The withdraw flow: over-withdrawing is rejected, a partial withdrawal draws down the available pool and shows Paid in Recent activity, "Withdraw all" fills the exact remainder, everything persists across a reload |
 | `messages-unread.mjs` | The unread-message indicator: sidebar badge and per-conversation dot, and specifically that both clear **live** when a thread is opened, with no page reload |
 | `linkedin-scrape.mjs` | LinkedIn identity enrichment at signup: a real profile's name/photo (via `og:title`/`og:image`) overwrite the typed signup name and show up everywhere a creator's avatar appears — onboarding preview, topbar, My card, the public card page, and the brand-facing Marketplace card — plus that a profile that won't resolve falls back silently and never blocks onboarding |
+| `ai-matching.mjs` | AI Matching end to end: a real OpenAI call grounded in the real Marketplace pool and the brand's real ICPs/campaign brief returns a shortlist with a reason per pick, rendered as real, working Marketplace cards (Add creates a real `Collaboration`). Needs `OPENAI_API_KEY` with credit — makes one real, billed API call per run |
 
 If you fix a bug in one of these areas, extend the matching script rather
 than writing a one-off that gets thrown away — that's the whole point of
