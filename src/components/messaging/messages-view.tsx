@@ -39,7 +39,7 @@ export function MessagesView({
 }) {
   return (
     <div className="mx-auto max-w-[1400px]">
-      <div className="grid h-[calc(100vh-9rem)] overflow-hidden rounded-xl border border-[#e6e8ef] bg-white lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+      <div className="grid h-[calc(100vh-12rem)] overflow-hidden rounded-xl border border-[#e6e8ef] bg-white lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
         <aside className="flex min-h-0 flex-col border-r border-[#e6e8ef]">
           <div className="p-5">
             <h1 className="font-display text-[1.5rem] font-semibold tracking-[-0.02em] text-ink">
